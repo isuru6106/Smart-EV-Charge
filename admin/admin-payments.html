@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin Payments</title>
+
+  <link rel="stylesheet" href="adminstyle.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="logo">
+    ⚡ <span>SmartEV</span> Charge
+  </div>
+
+  <nav class="nav-links">
+
+    <a href="admin-dashboard.html">Dashboard</a>
+
+    <a href="manage-users.html">Users</a>
+
+    <a href="manage-centers.html">Centers</a>
+
+    <a href="admin-payments.html" class="active">Payments</a>
+
+    <a href="reports.html">Reports</a>
+
+    <a href="../login.html">Logout</a>
+
+  </nav>
+
+</header>
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <p class="mini-title">
+        PLATFORM PAYMENT
+      </p>
+
+      <h1>Payment Management</h1>
+
+    </div>
+
+  </div>
+
+ 
+
+  <div class="glass-table">
+
+    <table>
+
+    <thead>
+        <tr>
+            <th>Payment ID</th>
+            <th>User</th>
+            <th>Center</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Fund Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody id="paymentTableBody">
+
+    </tbody>
+
+</table>
+  </div>
+
+</div>
+<script>
+
+fetch('../php/get_admin_payment_stats.php')
+.then(response => response.json())
+.then(data => {
+
+    document.getElementById('totalRevenue').innerHTML =
+    'Rs. ' + data.revenue;
+
+    document.getElementById('pendingRevenue').innerHTML =
+    'Rs. ' + data.pending;
+
+    document.getElementById('completedPayments').innerHTML =
+    data.completed;
+
+});
+
+</script>
+<script>
+
+fetch('../php/get_admin_payments.php')
+.then(response => response.json())
+.then(data => {
+
+    let html = '';
+
+    data.forEach(payment => {
+
+        let paymentClass =
+            payment.status === 'Paid'
+            ? 'active-status'
+            : 'pending-status';
+
+        let fundClass =
+            payment.release_status === 'Released'
+            ? 'active-status'
+            : 'pending-status';
+
+        let actionButton = '';
+
+        if (payment.release_status === 'Pending') {
+
+       actionButton = `
+        <button
+            class="primary-btn"
+            onclick="releaseFunds(${payment.payment_id})">
+            Release Funds
+        </button>
+    `;
+
+      } else {
+
+        actionButton = `
+        <span class="status active-status">
+            Released
+        </span>
+        `;
+      }
+
+        html += `
+        <tr>
+            <td>PAY${payment.payment_id}</td>
+            <td>${payment.user_name}</td>
+            <td>${payment.center_name}</td>
+            <td>Rs. ${payment.amount}</td>
+
+            <td>
+                <span class="status ${paymentClass}">
+                    ${payment.status}
+                </span>
+            </td>
+
+            <td>
+                <span class="status ${fundClass}">
+                    ${payment.release_status}
+                </span>
+            </td>
+
+            <td>
+                ${actionButton}
+            </td>
+        </tr>
+        `;
+    });
+
+    document.getElementById('paymentTableBody').innerHTML = html;
+
+});
+</script>
+<script>function releaseFunds(paymentId)
+{
+    fetch('../php/release_funds.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'payment_id=' + paymentId
+    })
+    .then(response => response.text())
+    .then(result => {
+
+        if(result === 'success')
+        {
+            alert('Funds Released Successfully');
+            location.reload();
+        }
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Center Owner Dashboard</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+    <div class="logo">⚡ Smart<span>EV</span> Charge</div>
+
+    <div class="nav-links">
+      <a class="active" href="center-dashboard.html">Dashboard</a>
+      <a href="manage-slots.html">Slots</a>
+      <a href="manage-bookings.html">Bookings</a>
+      <a href="center-payments.html">Payments</a>
+      <a href="center-reports.html">Reports</a>
+      <a href="earnings.html">Earnings</a>
+      <a href="bank-details.html">Bank Account</a>
+      <a href="../login.html">Logout</a>
+    </div>
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Charging Center Management</p>
+
+        <h1>
+            Welcome Back,
+            <span id="centerName">
+                Loading...
+            </span>
+        </h1>
+
+        <p class="hero-description">
+          Manage live charging slots, customer bookings, payments,
+          revenue reports and performance analytics from one smart dashboard.
+        </p>
+      </div>
+
+      <div class="dashboard-profile-card">
+        <h2>Center Owner</h2>
+        <p>Smart EV Charge</p>
+      </div>
+
+    </section>
+
+    <section class="grid dashboard-kpis">
+      
+
+      <div class="card">
+        <h3>Available Slots</h3>
+        <p>Currently available charging ports</p>
+        <div class="kpi" id="availableSlots">0</div>
+      </div>
+
+      <div class="card">
+        <h3>Pending Bookings</h3>
+        <p>Bookings waiting for confirmation</p>
+        <div class="kpi" id="pendingBookings">0</div>
+
+      </div>
+
+      <div class="card">
+        <h3>Today Revenue</h3>
+        <p>Total earnings generated today</p>
+        <div class="kpi" id="todayRevenue">Rs. 0</div>
+
+      </div>
+
+      <div class="card">
+        <h3>Customer Rating</h3>
+        <p>Average customer satisfaction</p>
+        <div class="kpi" id="customerRating">0</div>
+      </div>
+
+    </section>
+
+    <section class="two-col" style="margin-top:30px;">
+
+      <div class="card">
+        <h3>Weekly Revenue Analytics</h3>
+        <p>Income performance overview</p>
+        <canvas id="revenueChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Charging Port Status</h3>
+        <p>Current charging port availability</p>
+        <canvas id="portChart"></canvas>
+      </div>
+
+    </section>
+
+    <section class="two-col" style="margin-top:30px;">
+
+      <div class="card">
+        <h3>Booking Status Analytics</h3>
+        <p>Pending, completed and approved booking analysis</p>
+        <canvas id="bookingChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Customer Rating Analysis</h3>
+        <p>Customer review and service quality performance</p>
+        <canvas id="ratingChart"></canvas>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="../assets/js/charts.js"></script>
+
+<!-- Dashboard Statistics -->
+<script>
+
+fetch('../php/get_owner_stats.php')
+.then(response => response.json())
+.then(data => {
+
+    document.getElementById("availableSlots").innerHTML =
+        data.available || 0;
+
+    document.getElementById("pendingBookings").innerHTML =
+        data.pending || 0;
+
+    document.getElementById("todayRevenue").innerHTML =
+        "Rs. " + (data.revenue || 0);
+
+    document.getElementById("customerRating").innerHTML =
+        data.rating || 0;
+
+})
+.catch(error => {
+    console.log("Stats Error:", error);
+});
+
+</script>
+
+<!-- Center Name -->
+<script>
+
+fetch('../php/get_owner_center.php')
+.then(response => response.json())
+.then(data => {
+
+    document.getElementById("centerName").innerHTML =
+        data.center_name || "Center";
+
+})
+.catch(error => {
+    console.log("Center Error:", error);
+});
+
+</script>
+
+<!-- Revenue Chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+fetch('../php/get_chart_data.php')
+.then(response => response.json())
+.then(data => {
+
+    new Chart(
+        document.getElementById('revenueChart'),
+        {
+            type: 'line',
+            data: {
+                labels: data.days,
+                datasets: [{
+                    label: 'Revenue',
+                    data: data.revenue,
+                    borderWidth: 2
+                }]
+            }
+        }
+    );
+
+});
+
+</script>
+
+<!-- Rating Chart -->
+<script>
+
+fetch('../php/get_rating_data.php')
+.then(response => response.json())
+.then(data => {
+
+    let rating = data.rating || 0;
+
+    new Chart(
+        document.getElementById("ratingChart"),
+        {
+            type: 'radar',
+            data: {
+                labels: [
+                    'Service',
+                    'Speed',
+                    'Availability',
+                    'Location',
+                    'Support'
+                ],
+                datasets: [{
+                    label: 'Center Rating',
+                    data: [
+                        rating,
+                        rating,
+                        rating,
+                        rating,
+                        rating
+                    ]
+                }]
+            }
+        }
+    );
+
+});
+
+</script>
+
+<script>
+    fetch('../php/get_port_status.php')
+.then(response => response.json())
+.then(data => {
+
+    new Chart(
+        document.getElementById("portChart"),
+        {
+            type:'doughnut',
+            data:{
+                labels:[
+                    'Available',
+                    'Occupied'
+                ],
+                datasets:[{
+                    data:[
+                        data.available,
+                        data.occupied
+                    ]
+                }]
+            }
+        }
+    );
+
+});
+</script>
+<script>
+
+fetch("../php/get_wallet_balance.php")
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById(
+        "walletBalance"
+    ).innerHTML =
+
+    "Rs. " +
+
+    parseFloat(
+        data.wallet_balance
+    ).toFixed(2);
+
+});
+
+</script>
+</body>
+</html>

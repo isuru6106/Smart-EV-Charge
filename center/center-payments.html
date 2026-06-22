@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Center Payments - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="center-dashboard.html">Dashboard</a>
+      <a href="manage-slots.html">Slots</a>
+      <a href="manage-bookings.html">Bookings</a>
+      <a class="active" href="center-payments.html">Payments</a>
+      <a href="center-reports.html">Reports</a>
+      <a href="earnings.html">Earnings</a>
+      <a href="bank-details.html">Bank Account</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Payment Management</p>
+
+        <h1>
+          Center Payment
+          <span>Management</span>
+        </h1>
+
+        <p class="hero-description">
+          Track customer payments, pending balances, completed transactions,
+          daily revenue and center earnings in one professional dashboard.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="grid dashboard-kpis">
+
+      <div class="card">
+        <h3>Total Revenue</h3>
+        <p>Overall center income</p>
+        <div class="kpi" id="totalRevenue">0</div>
+      </div>
+
+      <div class="card">
+        <h3>Today Revenue</h3>
+        <p>Income generated today</p>
+        <div class="kpi" id="todayRevenue">0</div>
+      </div>
+
+      <div class="card">
+        <h3>Pending Payments</h3>
+        <p>Waiting payment confirmation</p>
+        <div class="kpi" id="pendingPayments">0</div>
+      </div>
+
+      <div class="card">
+        <h3>Completed</h3>
+        <p>Total completed payments</p>
+        <div class="kpi" id="completedPayments">0</div>
+      </div>
+
+    </section>
+
+    <section class="payment-form-card">
+
+      <h2>Add Manual Payment</h2>
+      <p>Record manual customer payments for charging sessions.</p>
+
+      <form action="../php/add_payment.php" method="POST" class="payment-form">
+
+        <input
+          type="number"
+          name="booking_id"
+          placeholder="Booking ID"
+          required
+        />
+
+        <input
+          type="number"
+          name="amount"
+          placeholder="Amount Rs."
+          required
+        />
+
+        <select name="method">
+          <option value="Cash">Cash</option>
+          <option value="Card">Card</option>
+          <option value="Online Transfer">Online Transfer</option>
+          <option value="QR Payment">QR Payment</option>
+        </select>
+
+        <select name="status">
+          <option value="Paid">Paid</option>
+          <option value="Pending">Pending</option>
+          <option value="Refunded">Refunded</option>
+        </select>
+
+        <button class="btn" type="submit">Save Payment</button>
+
+      </form>
+
+    </section>
+        
+
+    <section class="booking-table-card" style="margin-top:30px;">
+
+      <div class="booking-table-header">
+        <div>
+          <h2>Recent Payments</h2>
+          <p>Latest customer payment records and transaction status</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+
+        <table class="modern-booking-table">
+
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Booking ID</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+
+          <tbody id="paymentTableBody">
+
+            </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+<script>
+
+fetch('../php/get_center_payments.php')
+
+.then(response => response.json())
+
+.then(payments => {
+
+    let html = '';
+
+    payments.forEach(row => {
+
+        html += `
+
+        <tr>
+
+            <td>#PAY${row.payment_id}</td>
+
+            <td>#BK${row.booking_id}</td>
+
+            <td>${row.full_name}</td>
+
+            <td>Rs. ${row.amount}</td>
+
+            <td>${row.method}</td>
+
+            <td>${row.status}</td>
+
+            <td>${row.paid_at ?? '-'}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById(
+        'paymentTableBody'
+    ).innerHTML = html;
+
+});
+
+</script>
+<script>
+fetch("../php/get_center_payment_stats.php")
+.then(response => response.json())
+.then(data => {
+
+    document.getElementById("totalRevenue").innerHTML =
+        "Rs. " + parseFloat(data.total_revenue).toFixed(2);
+
+    document.getElementById("todayRevenue").innerHTML =
+        "Rs. " + parseFloat(data.today_revenue).toFixed(2);
+
+    document.getElementById("pendingPayments").innerHTML =
+        "Rs. " + parseFloat(data.pending).toFixed(2);
+
+    document.getElementById("completedPayments").innerHTML =
+        data.completed;
+
+});
+
+</script>
+
+</body>
+</html>

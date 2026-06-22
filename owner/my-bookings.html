@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>My Bookings - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="owner-dashboard.html">Dashboard</a>
+      <a href="gps-map.html">GPS Centers</a>
+      <a href="book-slot.html">Book Slot</a>
+      <a class="active" href="my-bookings.html">My Bookings</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="payments.html">Payments</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Charging Booking History</p>
+
+        <h1>
+          My Charging
+          <span>Bookings</span>
+        </h1>
+
+        <p class="hero-description">
+          View your upcoming charging bookings, approved reservations,
+          pending requests and completed charging sessions.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="grid dashboard-kpis">
+
+  <div class="card">
+    <h3>Total Bookings</h3>
+    <p>All charging reservations</p>
+    <div class="kpi" id="totalBookings">0</div>
+  </div>
+
+  <div class="card">
+    <h3>Approved</h3>
+    <p>Confirmed charging bookings</p>
+    <div class="kpi" id="approvedBookings">0</div>
+  </div>
+
+  <div class="card">
+    <h3>Pending</h3>
+    <p>Waiting for center approval</p>
+    <div class="kpi" id="pendingBookings">0</div>
+  </div>
+
+  <div class="card">
+    <h3>Completed</h3>
+    <p>Finished charging sessions</p>
+    <div class="kpi" id="completedBookings">0</div>
+  </div>
+
+</section>
+
+    <section class="booking-table-card" style="margin-top:30px;">
+
+      <div class="booking-table-header">
+        <div>
+          <h2>Recent Bookings</h2>
+          <p>Your latest charging booking details and reservation status</p>
+        </div>
+
+        <a class="btn" href="book-slot.html">
+          + Book New Slot
+        </a>
+      </div>
+
+      <div class="table-wrapper">
+
+        <table class="modern-booking-table">
+
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Charging Center</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Charging Hours</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+            <tbody id="bookingTable">
+
+            </tbody>
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+
+/* LOAD BOOKING COUNTS */
+
+fetch('../php/get_booking_stats.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById("totalBookings")
+    .innerHTML = data.total;
+
+    document.getElementById("approvedBookings")
+    .innerHTML = data.approved;
+
+    document.getElementById("pendingBookings")
+    .innerHTML = data.pending;
+
+    document.getElementById("completedBookings")
+    .innerHTML = data.completed;
+
+});
+
+
+/* LOAD BOOKINGS */
+
+fetch('../php/get_bookings.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    let table =
+    document.getElementById("bookingTable");
+
+    table.innerHTML = "";
+
+    if(data.length === 0){
+
+        table.innerHTML = `
+        <tr>
+            <td colspan="6">
+                No bookings found
+            </td>
+        </tr>
+        `;
+
+        return;
+    }
+
+    data.forEach(booking => {
+
+        let badgeClass = "pending";
+
+        if(
+            booking.status === "Approved"
+        ){
+            badgeClass = "approved";
+        }
+
+        if(
+            booking.status === "Completed"
+        ){
+            badgeClass = "approved";
+        }
+
+        table.innerHTML += `
+
+        <tr>
+
+            <td>
+                #BK${booking.booking_id}
+            </td>
+
+            <td>
+
+                <div class="customer-info">
+
+                    <div class="customer-avatar">
+
+                        ${booking.center_name.charAt(0)}
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+
+                            ${booking.center_name}
+
+                        </strong>
+
+                        <p>
+
+                            ${booking.city}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </td>
+
+            <td>
+                ${booking.booking_date}
+            </td>
+
+            <td>
+                ${booking.booking_time}
+            </td>
+
+            <td>
+                ${booking.charging_hours} hrs
+            </td>
+
+            <td>
+
+    <span class="status ${badgeClass}">
+        ${booking.status}
+    </span>
+
+</td>
+
+<td>
+
+${
+booking.status === "Pending"
+
+?
+
+`
+
+<button
+class="table-btn"
+onclick="editBooking(${booking.booking_id})">
+
+Edit
+
+</button>
+
+<button
+class="table-btn"
+onclick="cancelBooking(${booking.booking_id})">
+
+Cancel
+
+</button>
+
+`
+
+:
+
+booking.status === "Approved"
+
+?
+
+`
+
+<button
+id="completeBtn${booking.booking_id}"
+class="table-btn"
+onclick="completeBooking(${booking.booking_id})">
+
+Complete Charging
+
+</button>
+
+<button
+class="table-btn"
+onclick="editBooking(${booking.booking_id})">
+
+Edit
+
+</button>
+
+<button
+class="table-btn"
+onclick="cancelBooking(${booking.booking_id})">
+
+Cancel
+
+</button>
+
+`
+
+:
+
+booking.status === "Completed"
+
+?
+
+`
+
+<span style="color:#00ff99;font-weight:bold;">
+Completed
+</span>
+
+`
+
+:
+
+'-'
+
+}
+
+</td>
+        </tr>
+
+        `;
+
+    });
+
+});
+
+function completeBooking(bookingId){
+
+    document.getElementById(
+  "completeBtn" + bookingId
+  ).disabled = true;
+
+    if(!confirm("Complete this charging session?")){
+        return;
+    }
+
+    fetch("../php/complete_booking.php",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":
+            "application/x-www-form-urlencoded"
+        },
+
+        body:"booking_id="+bookingId
+
+    })
+
+    .then(response => response.text())
+
+   .then(data => {
+
+    console.log(data);
+
+    alert(data);
+
+    if(data === "insufficient_balance"){
+        return;
+    }
+
+    if(data === "already_completed"){
+        return;
+    }
+
+    if(data === "success"){
+        location.reload();
+    }
+
+});
+
+}
+function editBooking(bookingId){
+
+    window.location.href =
+    "edit-booking.html?booking_id=" +
+    bookingId;
+
+}
+
+function cancelBooking(bookingId){
+
+    if(!confirm(
+        "Are you sure you want to cancel this booking?"
+    )){
+        return;
+    }
+
+    fetch(
+        "../php/cancel_booking.php",
+        {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                "application/x-www-form-urlencoded"
+            },
+
+            body:
+            "booking_id=" + bookingId
+
+        }
+    )
+
+    .then(response => response.text())
+
+    .then(data => {
+
+        alert(
+            "Booking cancelled successfully"
+        );
+
+        location.reload();
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>

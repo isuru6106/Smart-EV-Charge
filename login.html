@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Login - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+
+  <!-- Background -->
+  <div class="hero-bg-slider"></div>
+  <div class="hero-dark-overlay"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a class="active" href="login.html">Login</a>
+      <a href="register.html">Register</a>
+    </div>
+
+  </nav>
+
+  <!-- Login Page -->
+  <section class="auth-page">
+
+    <!-- Left Side -->
+    <div class="auth-info">
+
+      <p class="tagline">
+        Smart EV Platform
+      </p>
+
+      <h1>
+        Access Your
+        <span>EV Charging Dashboard</span>
+      </h1>
+
+      <p>
+        Login as an EV owner, charging center owner or administrator
+        to manage bookings, charging sessions, GPS tracking,
+        reports, analytics and smart EV operations.
+      </p>
+
+      <div class="auth-features">
+
+        <div>
+          Live charging management
+        </div>
+
+        <div>
+          GPS based smart recommendations
+        </div>
+
+        <div>
+          Analytics and payment reports
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Right Side Login Form -->
+    <div class="form-box auth-card">
+
+      <h2>Login</h2>
+
+      <form action="php/login.php" method="POST">
+
+        <!-- Email -->
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          required
+        />
+
+        <!-- Password -->
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
+
+        <!-- Role -->
+        <select
+          name="role"
+          required
+        >
+
+          <option value="owner">
+            EV Owner
+          </option>
+
+          <option value="center">
+            Charging Center Owner
+          </option>
+
+          <option value="admin">
+            Administrator
+          </option>
+
+        </select>
+
+        <!-- Login Button -->
+        <button class="btn" type="submit">
+          Login Now
+        </button>
+
+      </form>
+
+      <!-- Bottom -->
+      <p class="auth-bottom-text">
+
+        Don't have an account?
+
+        <a href="register.html">
+          Create account
+        </a>
+
+      </p>
+
+    </div>
+
+  </section>
+
+  <!-- Background Slider -->
+  <script src="assets/js/hero-slider.js"></script>
+
+</body>
+
+</html>

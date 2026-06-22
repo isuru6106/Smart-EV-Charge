@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>My Wallet - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="owner-dashboard.html">Dashboard</a>
+      <a href="gps-map.html">GPS Centers</a>
+      <a href="book-slot.html">Book Slot</a>
+      <a href="my-bookings.html">My Bookings</a>
+      <a class="active" href="wallet.html">Wallet</a>
+      <a href="payments.html">Payments</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Top-up your wallet</p>
+
+        <h1>
+          My Wallet
+          <span>Wallet Balance
+            <h3 id="walletBalance">
+                Rs. 0.00
+          </span>
+        </h1>
+
+        <p class="hero-description">
+          View your wallet balance to start booking
+      </div>
+
+    </section>
+<div class="wallet-kpis">
+
+    <div class="wallet-card">
+
+        <h2>Wallet Balance</h2>
+
+        <h1 id="walletBalanceCard" class="wallet-value">
+            Rs. 0.00
+        </h1>
+
+    </div>
+
+    <div class="wallet-card">
+
+        <h2>Last Top-Up</h2>
+
+        <h1 id="lastTopup" class="wallet-value">
+            Rs. 0.00
+        </h1>
+
+    </div>
+
+</div>
+</head>
+
+<body>
+
+<div class="wallet-form-card">
+
+<h2>My Wallet</h2>
+
+
+</h3>
+
+<form id="walletForm">
+
+<input
+type="number"
+id="amount"
+name="amount"
+placeholder="Top Up Amount"
+required>
+
+<select
+id="paymentMethod"
+name="method">
+
+<option value="">Select Payment Method</option>
+
+<option value="Card">
+Credit / Debit Card
+</option>
+
+<option value="Online">
+Online Banking
+</option>
+
+</select>
+
+<button
+type="button"
+id="topupBtn"
+class="btn">
+
+Top Up Wallet
+
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+fetch("../php/get_wallet_balance.php")
+
+.then(res=>res.json())
+
+.then(data=>{
+
+document.getElementById(
+"walletBalance"
+).innerHTML =
+
+"Rs. " +
+data.wallet_balance;
+
+});
+
+</script>
+<script>
+
+document
+.getElementById("topupBtn")
+.addEventListener("click", () => {
+
+    const amount =
+    document.getElementById("amount").value;
+
+    const method =
+    document.getElementById("paymentMethod").value;
+
+    if(amount === "" || amount <= 0){
+
+        alert("Enter valid amount");
+        return;
+
+    }
+
+    if(method === ""){
+
+        alert("Select payment method");
+        return;
+
+    }
+
+    if(method === "Card"){
+
+        window.location.href =
+        "card-payment.html?amount=" + amount;
+
+    }
+
+    else if(method === "Online"){
+
+        window.location.href =
+        "online-payment.html?amount=" + amount;
+
+    }
+
+});
+
+</script>
+<script>
+
+fetch("../php/get_wallet_kpis.php")
+
+.then(res => res.json())
+
+.then(data => {
+
+    document.getElementById(
+        "walletBalanceCard"
+    ).innerHTML =
+    "Rs. " + data.wallet_balance;
+
+    document.getElementById(
+        "lastTopup"
+    ).innerHTML =
+    "Rs. " + data.last_topup;
+
+});
+
+</script>
+<style>
+.wallet-kpis{
+
+    display:flex;
+    gap:25px;
+    margin-top:20px;
+    margin-bottom:10px;
+
+}
+
+.wallet-kpis{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(2, 300px);
+
+    gap:25px;
+
+    margin-top:40px;
+
+}
+
+.wallet-card{
+
+    background:
+    linear-gradient(
+    135deg,
+    rgba(0,255,120,.08),
+    rgba(0,100,50,.25)
+    );
+
+    border-radius:30px;
+
+    padding:30px;
+
+    border:
+    1px solid rgba(0,255,120,.15);
+
+    backdrop-filter:blur(12px);
+
+}
+</style>
+</body>
+</html>

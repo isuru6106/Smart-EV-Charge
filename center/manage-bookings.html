@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Manage Bookings - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="center-dashboard.html">Dashboard</a>
+      <a href="manage-slots.html">Slots</a>
+      <a class="active" href="manage-bookings.html">Bookings</a>
+      <a href="center-payments.html">Payments</a>
+      <a href="center-reports.html">Reports</a>
+      <a href="earnings.html">Earnings</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <!-- HERO -->
+
+    <section class="dashboard-hero">
+
+      <div>
+
+        <p class="tagline">
+          Booking Management
+        </p>
+
+        <h1>
+          Charging Booking
+          <span>Requests</span>
+        </h1>
+
+        <p class="hero-description">
+          Manage customer charging requests, approve bookings,
+          monitor schedules and handle charging queues in real time.
+        </p>
+
+    </section>
+
+    <!-- BOOKING TABLE -->
+
+    <section class="booking-table-card">
+
+      <div class="booking-table-header">
+
+        <div>
+          <h2>Recent Booking Requests</h2>
+          <p>Live charging booking approvals and customer requests</p>
+        </div>
+
+        <button class="btn">
+          + New Booking
+        </button>
+
+      </div>
+
+      <div class="table-wrapper">
+
+        <table class="modern-booking-table">
+
+          <thead>
+
+            <tr>
+              <th>Booking ID</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Vehicle</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+
+          </thead>
+
+            <tbody id="bookingTableBody">
+
+            </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+  <script>
+
+fetch('../php/get_owner_bookings.php')
+
+.then(response => response.json())
+
+.then(bookings => {
+
+    let html = "";
+
+    bookings.forEach(row => {
+
+        html += `
+
+        <tr>
+
+            <td>#BK${row.booking_id}</td>
+
+            <td>${row.full_name}</td>
+
+            <td>${row.booking_date}</td>
+
+            <td>${row.booking_time}</td>
+
+            <td>${row.model ?? '-'}</td>
+
+            <td>${row.status}</td>
+
+            <td>
+    <span class="status-badge ${row.status.toLowerCase()}">
+        ${row.status}
+    </span>
+</td>
+
+<td>
+
+${row.status === 'Pending' ? `
+
+<button
+onclick="updateBooking(
+${row.booking_id},
+'Approved'
+)">
+Approve
+</button>
+
+<button
+onclick="updateBooking(
+${row.booking_id},
+'Rejected'
+)">
+Reject
+</button>
+
+` : row.status === 'Approved' ? `
+
+<button
+onclick="updateBooking(
+${row.booking_id},
+'Completed'
+)">
+Complete
+</button>
+
+` : `
+
+-
+
+`}
+
+</td>
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById(
+        "bookingTableBody"
+    ).innerHTML = html;
+
+});
+
+</script>
+
+<script>
+
+function updateBooking(
+    bookingId,
+    status
+){
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "booking_id",
+        bookingId
+    );
+
+    formData.append(
+        "status",
+        status
+    );
+
+    fetch(
+        "../php/update_booking.php",
+        {
+            method:"POST",
+            body:formData
+        }
+    )
+
+    .then(response => response.text())
+
+    .then(result => {
+
+        alert(
+            "Booking Updated"
+        );
+
+        location.reload();
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>

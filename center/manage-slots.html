@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Manage Slots - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+    <div class="logo">⚡ Smart<span>EV</span> Charge</div>
+
+    <div class="nav-links">
+      <a href="center-dashboard.html">Dashboard</a>
+      <a class="active" href="manage-slots.html">Slots</a>
+      <a href="manage-bookings.html">Bookings</a>
+      <a href="center-payments.html">Payments</a>
+      <a href="center-reports.html">Reports</a>
+      <a href="earnings.html">Earnings</a>
+      <a href="../login.html">Logout</a>
+    </div>
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Charging Slot Control</p>
+
+        <h1>
+          Manage Charging
+          <span>Charging Ports</span>
+        </h1>
+
+        <p class="hero-description">
+          Update available charging ports and charging center availability
+          in real time for EV owners.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="slot-management-layout">
+
+      <div class="slot-form-card">
+
+        <h2>Update Charging Availability</h2>
+        <p>Keep your charging center availability accurate for users.</p>
+
+        <form action="../php/update_slots.php" method="POST">
+
+          <label>Center ID</label>
+          <input
+            type="number"
+            name="center_id"
+            value="1"
+            required
+          />
+          <label>Total Charging Ports</label>
+
+          <input
+            type="number"
+            name="total_ports"
+            placeholder="Enter total charging ports"
+            required
+          />
+
+          <button class="btn" type="submit">
+            Update Slots
+          </button>
+
+        </form>
+
+      </div>
+
+      <div class="slot-info-card">
+
+        <h2>Current Status</h2>
+
+        <div class="slot-status-item">
+  <span>Total Charging Ports</span>
+  <strong id="totalPorts">0</strong>
+</div>
+
+<div class="slot-status-item">
+  <span>Available Slots</span>
+  <strong id="availablePorts">0</strong>
+</div>
+
+
+<div class="slot-status-item">
+  <span>Center Status</span>
+  <strong id="centerStatus" class="green-text">Loading...</strong>
+</div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+<script>
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+if(params.get("updated") == "1"){
+
+    alert("Slots Updated Successfully!");
+
+}
+
+</script>
+<script src="../assets/js/main.js"></script>
+
+<script>
+
+function loadCenterStatus(){
+
+    fetch('../php/get_slot_data.php')
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        document.getElementById('totalPorts').innerHTML =
+            data.total_ports;
+
+        document.getElementById('availablePorts').innerHTML =
+            data.available_slots;
+
+        document.getElementById('centerStatus').innerHTML =
+            data.status;
+
+    });
+
+}
+
+loadCenterStatus();
+
+</script>
+</body>
+
+</html>

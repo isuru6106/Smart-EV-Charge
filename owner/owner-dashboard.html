@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>EV Owner Dashboard - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css"/>
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a class="active" href="owner-dashboard.html">Dashboard</a>
+      <a href="gps-map.html">GPS Centers</a>
+      <a href="book-slot.html">Book Slot</a>
+      <a href="my-bookings.html">My Bookings</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="payments.html">Payments</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <!-- HERO SECTION -->
+
+    <section class="dashboard-hero">
+
+      <div>
+
+        <p class="tagline">
+          EV OWNER PANEL
+        </p>
+
+        <h1>
+          Welcome Back,
+          <span id="username">
+
+            Loading...
+
+            </span>
+        </h1>
+
+        <p class="hero-description">
+          Find nearby charging centers,
+          check live slot availability,
+          book charging sessions,
+          track payments and view your charging history.
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- KPI SECTION -->
+
+    <section class="grid dashboard-kpis">
+       <div class="card">
+
+    <h3>Wallet Balance</h3>
+
+    <p>Available Funds</p>
+
+    <div
+        class="kpi"
+        id="walletBalance">
+
+        Rs. 0.00
+
+    </div>
+
+    <a
+    href="wallet.html"
+    class="btn">
+
+    Top Up
+
+    </a>
+
+</div> 
+
+      </div>
+
+      <div class="card">
+
+        <h3>Nearest Center</h3>
+
+        <p>Closest charging station</p>
+
+        <div
+          class="kpi"
+          id="nearestDistance">
+
+          Detecting...
+
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <h3>Upcoming Booking</h3>
+
+        <p>Today 4.30 PM</p>
+
+        <div
+            class="kpi"
+            id="upcomingBooking">
+
+            Loading...
+
+        </div>
+
+      </div>
+
+      <div class="card">
+
+        <h3>Total Sessions</h3>
+
+        <p>Charging history</p>
+
+        <div
+            class="kpi"
+            id="totalSessions">
+
+            Loading...
+
+        </div>
+
+      </div>
+      <div class="card">
+
+    <h3>Battery Status</h3>
+
+    <p>Current EV Battery</p>
+
+    <div
+        class="kpi"
+        id="batteryPercentage"
+    >
+        Loading...
+    </div>
+
+    <button
+        class="btn"
+        onclick="updateBattery()"
+    >
+        Update Battery
+    </button>
+      </div>
+
+    <div class="card">
+
+    <h3>
+        Charging Recommendation
+    </h3>
+
+    <p
+        id="batteryMessage"
+    >
+        Loading...
+    </p>
+
+    </div>
+
+</div>
+
+    </section>
+
+    <!-- SMART FEATURES -->
+
+    <section
+      class="two-col"
+      style="margin-top:30px;">
+
+      <div class="card">
+
+        <h3>
+          Smart Recommendation
+        </h3>
+
+        <p>
+          System checks your GPS location,
+          battery level and available slots
+          to suggest the best charging center.
+        </p>
+
+        <a
+          class="btn"
+          href="gps-map.html"
+          style="margin-top:20px;">
+
+          Find Nearest Center
+
+        </a>
+
+      </div>
+
+      <div class="card">
+
+        <h3>
+          Quick Booking
+        </h3>
+
+        <p>
+          Book charging slots,
+          track payment status
+          and give ratings after charging.
+        </p>
+
+        <a
+          class="btn"
+          href="book-slot.html"
+          style="margin-top:20px;">
+
+          Book Charging Slot
+
+        </a>
+
+      </div>
+
+    </section>
+
+    <!-- NEAREST CHARGING CENTERS -->
+
+    <section style="margin-top:40px;">
+
+      <h2 style="margin-bottom:20px;">
+        Nearest Charging Centers
+      </h2>
+
+      <div
+        id="nearestCenters"
+        class="grid dashboard-kpis">
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+
+    let userLat;
+    let userLng;
+
+    navigator.geolocation.getCurrentPosition(
+
+      function(position){
+
+        userLat = position.coords.latitude;
+        userLng = position.coords.longitude;
+
+        loadNearestCenters();
+
+      },
+
+      function(error){
+
+        alert("Please allow location access!");
+
+      }
+
+    );
+
+    function calculateDistance(lat1, lon1, lat2, lon2){
+
+      const R = 6371;
+
+      const dLat =
+        (lat2-lat1) * Math.PI / 180;
+
+      const dLon =
+        (lon2-lon1) * Math.PI / 180;
+
+      const a =
+
+        Math.sin(dLat/2)
+        *
+        Math.sin(dLat/2)
+
+        +
+
+        Math.cos(lat1 * Math.PI / 180)
+
+        *
+
+        Math.cos(lat2 * Math.PI / 180)
+
+        *
+
+        Math.sin(dLon/2)
+
+        *
+
+        Math.sin(dLon/2);
+
+      const c =
+        2 * Math.atan2(
+          Math.sqrt(a),
+          Math.sqrt(1-a)
+        );
+
+      return R * c;
+    }
+
+    function loadNearestCenters(){
+
+      fetch('../php/get_centers.php')
+
+        .then(response => response.json())
+
+        .then(data => {
+
+          const container =
+            document.getElementById('nearestCenters');
+
+          container.innerHTML = "";
+
+          data.forEach(center => {
+
+            const distance =
+              calculateDistance(
+
+                userLat,
+                userLng,
+
+                parseFloat(center.latitude),
+                parseFloat(center.longitude)
+
+              );
+
+            center.distance = distance;
+
+          });
+
+          data.sort(
+            (a,b) =>
+            a.distance - b.distance
+          );
+
+          const nearest =
+            data.slice(0,3);
+
+          document.getElementById(
+            "nearestDistance"
+          ).innerHTML =
+
+            nearest[0].distance.toFixed(2)
+            + " km";
+
+          nearest.forEach(center => {
+
+            container.innerHTML += `
+
+              <div class="card">
+
+                <h3>
+                  ${center.center_name}
+                </h3>
+
+                <p>
+                  ${center.address}
+                </p>
+
+                <p>
+                  City:
+                  ${center.city}
+                </p>
+
+                <p>
+                  Distance:
+                  ${center.distance.toFixed(2)} km
+                </p>
+
+                <p>
+                  Available Slots:
+                  ${center.available_slots}
+                  /
+                  ${center.total_slots}
+                </p>
+
+                <p>
+                  Rs ${center.price_per_kwh}/kWh
+                </p>
+
+                <p>
+                  Status:
+                  ${center.status}
+                </p>
+
+              </div>
+
+            `;
+
+          });
+
+        })
+
+        .catch(error => {
+
+          console.log(error);
+
+        });
+
+    }
+
+  </script>
+<script>
+
+fetch('../php/get_user.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    if(data.success){
+
+        document.getElementById(
+            "username"
+        ).innerHTML =
+
+        data.full_name;
+
+    }
+
+});
+
+</script>
+<script>
+
+function loadBattery(){
+
+    fetch('../php/get_battery.php')
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        document.getElementById(
+            "batteryLevel"
+        ).innerHTML =
+
+        data.battery_percentage + "%";
+
+    });
+
+}
+
+loadBattery();
+
+</script>
+
+<script>
+
+fetch('../php/get_dashboard_data.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById(
+        "upcomingBooking"
+    ).innerHTML =
+
+    data.upcoming;
+
+    document.getElementById(
+        "totalSessions"
+    ).innerHTML =
+
+    data.sessions;
+
+});
+
+</script>
+<script>
+
+fetch(
+"../php/get_battery.php"
+)
+
+.then(response =>
+response.json()
+)
+
+.then(data => {
+
+    let battery =
+    parseInt(
+    data.battery_percentage
+    );
+
+    document.getElementById(
+    "batteryPercentage"
+    ).innerHTML =
+
+    battery + "%";
+
+    let message = "";
+
+    if(battery > 50){
+
+        message =
+        "Battery Healthy";
+
+    }
+
+    else if(
+        battery >= 20
+    ){
+
+        message =
+        "Recommended to Charge Soon";
+
+    }
+
+    else{
+
+        message =
+        "Critical Battery - Charge Immediately";
+
+    }
+
+    document.getElementById(
+    "batteryMessage"
+    ).innerHTML =
+    message;
+
+});
+
+function updateBattery(){
+
+    let battery = prompt(
+
+    "Enter current battery percentage"
+
+    );
+
+    if(
+        battery == null ||
+        battery == ""
+    ){
+        return;
+    }
+
+    fetch(
+
+    "../php/update_battery.php",
+
+    {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":
+            "application/x-www-form-urlencoded"
+        },
+
+        body:
+
+        "battery_percentage="
+
+        + battery
+
+    })
+
+    .then(response =>
+    response.text()
+    )
+
+    .then(data => {
+
+        alert(
+        "Battery Updated"
+        );
+
+        location.reload();
+
+    });
+
+}
+
+</script>
+<script>
+fetch("../php/get_pending_payment.php")
+
+.then(response => response.json())
+
+.then(data => {
+
+    if(data.booking_id > 0){
+
+        document.getElementById(
+        "pendingPaymentAmount"
+        ).innerHTML =
+        "Rs. " + data.amount;
+
+        document.getElementById(
+        "payNowBtn"
+        ).style.display =
+        "inline-block";
+
+        document.getElementById(
+        "payNowBtn"
+        ).href =
+        "payment.html?booking_id="
+        + data.booking_id;
+
+    }
+
+});
+</script>
+<script>
+
+fetch("../php/get_wallet_balance.php")
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById("walletBalance").innerHTML =
+        "Rs. " + parseFloat(data.wallet_balance).toFixed(2);
+
+})
+
+.catch(error => {
+
+    console.error("Wallet Error:", error);
+
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Book Charging Slot - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="owner-dashboard.html">Dashboard</a>
+      <a href="gps-map.html">GPS Centers</a>
+      <a class="active" href="book-slot.html">Book Slot</a>
+      <a href="my-bookings.html">My Bookings</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="payments.html">Payments</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Online Charging Reservation</p>
+
+        <h1>
+          Book Your
+          <span>Charging Slot</span>
+        </h1>
+
+        <p class="hero-description">
+          Select your preferred charging center, date, time and charger type
+          to reserve a charging slot quickly and easily.
+        </p>
+      </div>
+    </section>
+
+    <section class="booking-form-layout">
+
+      <div class="booking-form-card">
+
+        <h2>Charging Slot Details</h2>
+        <p>Complete the form below to confirm your charging reservation.</p>
+
+        <form
+  id="bookingForm"
+  action="../php/book_slot.php"
+  method="POST"
+>
+
+  <!-- USER ID -->
+
+  <label>
+    User ID
+  </label>
+
+  <input
+    type="number"
+    id="user_id"
+    name="user_id"
+    readonly
+  />
+
+  <!-- CENTER -->
+
+  <label>
+
+    Select Charging Center
+
+  </label>
+
+  <select
+    id="center_id"
+    name="center_id"
+    required
+  >
+
+  </select>
+
+  <!-- BOOKING DATE -->
+
+  <label>
+    Booking Date
+  </label>
+
+  <input
+    type="date"
+    id="booking_date"
+    name="booking_date"
+    required
+/>
+
+  <!-- BOOKING TIME -->
+
+  <label>
+    Booking Time
+  </label>
+
+  <input
+    type="time"
+    name="booking_time"
+    required
+  />
+
+  <!-- CHARGING HOURS -->
+
+  <label>
+    Charging Hours
+  </label>
+
+  <input
+    type="number"
+    id="charging_hours"
+    name="charging_hours"
+    placeholder="Enter charging hours"
+    min="1"
+    max="24"
+    required
+/>
+  <!-- Estimated Cost -->
+
+  <label>
+    Estimated Cost
+  </label>
+
+  <input
+    type="number"
+    id="cost"
+    name="cost"
+    readonly
+    
+  >
+
+  <!-- CHARGER TYPE -->
+
+  <label>
+    Charger Type
+  </label>
+
+  <select
+    name="charger_type"
+  >
+
+    <option value="Fast Charger">
+
+      Fast Charger
+
+    </option>
+
+    <option value="Normal Charger">
+
+      Normal Charger
+
+    </option>
+
+  </select>
+
+  <!-- SUBMIT -->
+
+  <button
+    class="btn"
+    type="submit"
+  >
+
+    Confirm Booking
+
+  </button>
+
+</form>
+      </div>
+
+      
+<div class="booking-info-card">
+
+  <h2>Booking Summary</h2>
+
+  <!-- CENTER -->
+
+  <div class="booking-info-item">
+
+    <span>
+      Smart Recommendation
+    </span>
+
+    <strong id="summaryCenter">
+
+      Loading...
+
+    </strong>
+
+  </div>
+
+  <!-- AVAILABLE SLOTS -->
+
+  <div class="booking-info-item">
+
+    <span>Total Charging Ports</span>
+
+    <strong id="summarySlots">
+
+      0
+
+    </strong>
+
+  </div>
+
+  <!-- DISTANCE -->
+
+  <div class="booking-info-item">
+
+    <span>
+      Estimated Distance
+    </span>
+
+    <strong id="summaryDistance">
+
+      Calculating...
+
+    </strong>
+
+  </div>
+
+  <!-- COST -->
+
+  <div class="booking-info-item">
+
+    <span>
+      Cost Per Hour
+    </span>
+
+    <strong id="summaryCost">
+
+      Rs. 0
+
+    </strong>
+
+  </div>
+
+</div>
+
+    </section>
+
+  </main>
+  <script>
+
+fetch('../php/get_session_user.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById(
+        "user_id"
+    ).value =
+
+    data.user_id;
+
+});
+
+</script>
+
+
+
+<script>
+
+/* USER LOCATION */
+
+let userLatitude = null;
+let userLongitude = null;
+
+/* GET LIVE LOCATION */
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+    userLatitude =
+    position.coords.latitude;
+
+    userLongitude =
+    position.coords.longitude;
+
+    updateSummary();
+
+},
+
+function(){
+
+    document.getElementById(
+        "summaryDistance"
+    ).innerHTML =
+
+    "Location blocked";
+
+}
+
+);
+
+/* LOAD USER SESSION */
+
+fetch('../php/get_session_user.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById(
+        "user_id"
+    ).value =
+
+    data.user_id;
+
+});
+
+/* LOAD CHARGING CENTERS */
+
+fetch('../php/get_centers.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    let dropdown =
+
+    document.getElementById(
+        "center_id"
+    );
+
+    dropdown.innerHTML = "";
+
+    data.forEach(center => {
+
+        dropdown.innerHTML += `
+
+        <option
+
+        value="${center.center_id}"
+
+        data-slots="${center.total_ports}"
+
+        data-price="${center.price_per_kwh}"
+
+        data-lat="${center.latitude}"
+
+        data-lng="${center.longitude}"
+
+        >
+
+        ${center.center_name}
+
+        </option>
+
+        `;
+
+    });
+
+    updateSummary();
+
+});
+
+/* UPDATE SUMMARY */
+
+function updateSummary(){
+
+    let dropdown =
+
+    document.getElementById(
+        "center_id"
+    );
+
+    if(dropdown.selectedIndex < 0){
+
+        return;
+
+    }
+
+    let selected =
+
+    dropdown.options[
+        dropdown.selectedIndex
+    ];
+    let costPerHour =
+parseFloat(
+    selected.dataset.price
+) || 0;
+
+let chargingHours =
+parseFloat(
+    document.getElementById(
+        "charging_hours"
+    ).value
+) || 0;
+
+let estimatedCost =
+costPerHour * chargingHours;
+
+document.getElementById(
+    "cost"
+).value =
+estimatedCost.toFixed(2);
+    /* CENTER */
+
+    document.getElementById(
+        "summaryCenter"
+    ).innerHTML =
+
+    selected.text;
+
+    /* AVAILABLE SLOTS */
+
+    document.getElementById(
+        "summarySlots"
+    ).innerHTML =
+
+    selected.dataset.slots;
+
+    /* COST */
+
+    document.getElementById(
+        "summaryCost"
+    ).innerHTML =
+
+    "Rs. " +
+
+    selected.dataset.price;
+
+    /* DISTANCE */
+
+    if(
+
+        userLatitude === null ||
+
+        userLongitude === null
+
+    ){
+
+        document.getElementById(
+            "summaryDistance"
+        ).innerHTML =
+
+        "Loading...";
+
+        return;
+
+    }
+
+    let distance = calculateDistance(
+
+        parseFloat(userLatitude),
+
+        parseFloat(userLongitude),
+
+        parseFloat(selected.dataset.lat),
+
+        parseFloat(selected.dataset.lng)
+
+    );
+
+    document.getElementById(
+        "summaryDistance"
+    ).innerHTML =
+
+    distance.toFixed(2)
+
+    + " km";
+
+}
+
+/* DISTANCE FORMULA */
+
+function calculateDistance(
+
+lat1,
+lon1,
+lat2,
+lon2
+
+){
+
+    const R = 6371;
+
+    let dLat =
+
+    (lat2-lat1)
+
+    *
+
+    Math.PI/180;
+
+    let dLon =
+
+    (lon2-lon1)
+
+    *
+
+    Math.PI/180;
+
+    let a =
+
+    Math.sin(dLat/2)
+
+    *
+
+    Math.sin(dLat/2)
+
+    +
+
+    Math.cos(lat1*Math.PI/180)
+
+    *
+
+    Math.cos(lat2*Math.PI/180)
+
+    *
+
+    Math.sin(dLon/2)
+
+    *
+
+    Math.sin(dLon/2);
+
+    let c =
+
+    2 *
+
+    Math.atan2(
+
+        Math.sqrt(a),
+
+        Math.sqrt(1-a)
+
+    );
+
+    return R * c;
+
+}
+
+/* CENTER CHANGE */
+
+document.addEventListener(
+
+"change",
+
+function(e){
+
+    if(
+
+        e.target.id == "center_id"
+
+    ){
+
+        updateSummary();
+
+    }
+
+});
+
+</script>
+<script>
+
+/* PREVENT PAST DATE */
+
+const today =
+new Date()
+.toISOString()
+.split('T')[0];
+
+document.getElementById(
+    "booking_date"
+).min = today;
+
+/* FORM VALIDATION */
+
+document.getElementById(
+    "bookingForm"
+)
+
+.addEventListener(
+
+"submit",
+
+function(e){
+
+    let bookingDate =
+    document.getElementById(
+        "booking_date"
+    ).value;
+
+    let bookingTime =
+    document.querySelector(
+        'input[name="booking_time"]'
+    ).value;
+
+    let chargingHours =
+    parseInt(
+        document.getElementById(
+            "charging_hours"
+        ).value
+    );
+
+    let now = new Date();
+
+    let selectedDateTime =
+    new Date(
+        bookingDate +
+        "T" +
+        bookingTime
+    );
+
+    /* PAST DATE/TIME */
+
+    if(
+
+        selectedDateTime < now
+
+    ){
+
+        alert(
+        "Past date or time is not allowed."
+        );
+
+        e.preventDefault();
+
+        return;
+
+    }
+
+    /* HOURS VALIDATION */
+
+    if(
+
+        chargingHours < 1 ||
+
+        chargingHours > 24
+
+    ){
+
+        alert(
+        "Charging hours must be between 1 and 24."
+        );
+
+        e.preventDefault();
+
+        return;
+
+    }
+
+});
+
+</script>
+<script>
+
+function calculateEstimatedCost()
+{
+    let hours = parseFloat(
+        document.getElementById("charging_hours").value
+    ) || 0;
+
+    let centerDropdown =
+        document.getElementById("center_id");
+
+    let selectedOption =
+        centerDropdown.options[
+            centerDropdown.selectedIndex
+        ];
+
+    let pricePerHour =
+        parseFloat(
+            selectedOption.dataset.price
+        ) || 0;
+
+    let totalCost =
+        hours * pricePerHour;
+
+    document.getElementById("cost").value =
+        totalCost.toFixed(2);
+}
+
+document.getElementById("charging_hours")
+.addEventListener(
+    "input",
+    calculateEstimatedCost
+);
+
+document.getElementById("center_id")
+.addEventListener(
+    "change",
+    calculateEstimatedCost
+);
+document.getElementById(
+    "charging_hours"
+).addEventListener(
+    "input",
+    updateSummary
+);
+</script>
+</body>
+
+</html>

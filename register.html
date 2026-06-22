@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Register - Smart EV Charge
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="assets/css/style.css"
+  >
+  <link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+
+</head>
+
+<body>
+
+  <!-- Background -->
+
+  <div class="hero-bg-slider"></div>
+
+  <div class="hero-dark-overlay"></div>
+
+  <!-- Navbar -->
+
+  <nav class="navbar">
+
+    <div class="logo">
+
+      ⚡ Smart<span>EV</span> Charge
+
+    </div>
+
+    <div class="nav-links">
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="login.html">
+        Login
+      </a>
+
+      <a
+        class="active"
+        href="register.html"
+      >
+        Register
+      </a>
+
+    </div>
+
+  </nav>
+
+  <!-- Register Section -->
+
+  <section class="auth-page">
+
+    <!-- LEFT SIDE -->
+
+    <div class="auth-info">
+
+      <p class="tagline">
+
+        Join Smart EV Network
+
+      </p>
+
+      <h1>
+
+        Create Your
+
+        <span>
+          Smart Charging Account
+        </span>
+
+      </h1>
+
+      <p>
+
+        Register as an EV owner
+        or charging center owner
+        and manage bookings,
+        payments, charging slots
+        and smart EV operations.
+
+      </p>
+
+      <div class="auth-features">
+
+        <div>
+
+          Smart charging management
+
+        </div>
+
+        <div>
+
+          GPS nearest center finder
+
+        </div>
+
+        <div>
+
+          Reports and analytics
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE FORM -->
+
+    <div class="form-box auth-card">
+
+      <h2>
+
+        Create Account
+
+      </h2>
+
+      <form
+    action="php/register.php"
+    method="POST"
+>
+
+    <!-- FULL NAME -->
+
+    <input
+    type="text"
+    id="full_name"
+    name="full_name"
+    placeholder="Full Name"
+    maxlength="200"
+    pattern="^[A-Za-z ]+$"
+    title="Name can contain only letters and spaces"
+    required
+    >
+    <small id="nameError"
+    style="
+    color:#ff6b6b;
+    display:none;
+    margin-left:10px;
+    ">
+    Name can contain only letters and spaces only.
+    </small>
+
+    <!-- EMAIL -->
+
+    <input
+    type="email"
+    id="email"
+    name="email"
+    placeholder="Email Address"
+    required
+    >
+    <small
+    id="emailError"
+    style="
+    color:#ff6b6b;
+    display:none;
+    margin-left:10px;
+    ">
+    Please enter a valid email address.
+    </small>
+
+    <!-- PHONE -->
+
+    <input
+    type="text"
+    name="phone"
+    id="phone"
+    placeholder="Phone Number"
+    pattern="0[0-9]{9}"
+    title="Enter a valid Sri Lankan phone number"
+    required
+    >
+    <small 
+    id="phoneError"
+    style="
+    color:#ff6b6b;
+    display:none;
+    margin-left:10px;
+    ">
+    Enter a valid Sri Lankan phone number.
+    </small>
+  
+      
+   <!-- PASSWORD -->
+
+    <input
+    type="password"
+    id="password"
+    name="password"
+    placeholder="Password"
+    required
+    >
+    <small id="passwordError" class="error-msg"
+    style="
+    color:#ff6b6b;
+    display:none;
+    margin-left:10px;
+    ">
+    Password must contain at least 8 characters with uppercase, lowercase, number and special character.>
+    </small>
+
+    <!-- ROLE -->
+
+    <select
+        name="role"
+        id="roleSelect"
+        required
+    >
+
+        <option value="ev_owner">
+            EV Owner
+        </option>
+
+        <option value="center_owner">
+            Charging Center Owner
+        </option>
+
+    </select>
+
+    <!-- VEHICLE FIELDS -->
+
+    <div id="vehicleFields">
+
+        <input
+            type="text"
+            name="vehicle_model"
+            placeholder="Vehicle Model"
+        >
+
+        <input
+            type="number"
+            name="battery_capacity"
+            placeholder="Battery Capacity (kWh)"
+        >
+
+    </div>
+
+    <!-- CENTER FIELDS -->
+
+    <div
+        id="centerFields"
+        style="display:none;"
+    >
+        <label>
+        Charging Center Name
+        </label>
+        <input
+            type="text"
+            name="center_name
+        >
+        <label>
+        Address
+        </label>
+        <input
+            type="text"
+            name="address"
+            placeholder="Address"
+        >
+         <label>
+        City
+        </label>
+        <input
+            type="text"
+            name="city"
+            
+        >
+        <label>
+        Number of Charging Ports
+        </label>
+        <input
+            type="number"
+            name="charging_ports"
+            
+        >
+        <label>
+        Price Per Hour
+        </label>
+        <input
+            type="number"
+            step="0.01"
+            name="price_per_kwh"
+        >
+
+        <label>
+        Opening Hour
+        </label>
+        <input
+            type="time"
+            name="open_time"
+            
+        >
+        <label>
+        Closing Hour
+        </label>
+        <input
+            type="time"
+            name="close_time"
+            placeholder="Closing Hour"
+        >
+
+        <label>
+        Center Description
+        </label>
+        <textarea
+            name="description"
+        ></textarea>
+        <label>
+        Facilities
+        </label>
+        <input
+            type="text"
+            name="facilities"
+            placeholder="Facilities (WiFi, Parking, Cafe, etc...)"
+        >
+        <label>
+        Emergency Contact Number
+        </label>
+        <input
+            type="text"
+            name="emergency_contact"
+        >
+
+        <input
+            type="hidden"
+            id="latitude"
+            name="latitude"
+        >
+
+        <input
+            type="hidden"
+            id="longitude"
+            name="longitude"
+        >
+
+    </div>
+
+    <!-- ERROR MESSAGE AREA -->
+
+    <div
+        id="error-message"
+        style="
+        color:#ff4d4d;
+        font-weight:600;
+        text-align:center;
+        margin:15px 0;
+        min-height:25px;
+        "
+    ></div>
+
+    <!-- BUTTON -->
+
+    <button
+        type="submit"
+        class="btn"
+    >
+        Register Now
+    </button>
+
+</form>
+
+      <p class="auth-bottom-text">
+
+        Already have an account?
+
+        <a href="login.html">
+
+          Login here
+
+        </a>
+
+      </p>
+
+    </div>
+
+  </section>
+
+  <!-- BACKGROUND SLIDER -->
+
+  <script src="assets/js/hero-slider.js"></script>
+
+  <!-- ROLE FIELD TOGGLE -->
+
+  <script>
+
+    const roleSelect =
+      document.getElementById(
+        "roleSelect"
+      );
+
+    const vehicleFields =
+      document.getElementById(
+        "vehicleFields"
+      );
+
+    const centerFields =
+      document.getElementById(
+        "centerFields"
+      );
+
+    function toggleFields() {
+
+      if (
+        roleSelect.value ===
+        "center_owner"
+      ) {
+
+        vehicleFields.style.display =
+          "none";
+
+        centerFields.style.display =
+          "block";
+
+      }
+
+      else {
+
+        vehicleFields.style.display =
+          "block";
+
+        centerFields.style.display =
+          "none";
+
+      }
+
+    }
+
+    toggleFields();
+
+    roleSelect.addEventListener(
+      "change",
+      toggleFields
+    );
+
+  </script>
+
+  <script>
+
+if (navigator.geolocation) {
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            document.getElementById("latitude").value =
+                position.coords.latitude;
+
+            document.getElementById("longitude").value =
+                position.coords.longitude;
+
+        },
+
+        function(error) {
+
+            alert(
+                "Please allow location access."
+            );
+
+        }
+
+    );
+
+}
+
+</script>
+<script>
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+if(params.has("error"))
+{
+    document
+        .getElementById(
+            "error-message"
+        )
+        .innerText =
+        params.get("error");
+}
+
+</script>
+<script>
+
+document.querySelector("form")
+
+.addEventListener(
+
+"submit",
+
+function(e){
+
+    let name =
+
+    document.querySelector(
+        '[name="full_name"]'
+    ).value.trim();
+
+    let nameRegex =
+
+    /^[A-Za-z ]+$/;
+
+    if(!nameRegex.test(name)){
+
+        alert(
+
+        "Name can contain only letters and spaces."
+
+        );
+
+        e.preventDefault();
+
+        return;
+    }
+
+    if(name.length > 200){
+
+        alert(
+
+        "Name cannot exceed 200 characters."
+
+        );
+
+        e.preventDefault();
+
+    }
+
+});
+
+</script>
+<script>
+
+const nameField =
+document.getElementById("full_name");
+
+const nameError =
+document.getElementById("nameError");
+
+nameField.addEventListener(
+"input",
+function(){
+
+    const regex =
+    /^[A-Za-z ]*$/;
+
+    if(
+        !regex.test(
+        nameField.value
+        )
+    ){
+
+        nameError.style.display =
+        "block";
+
+        nameField.style.border =
+        "2px solid red";
+
+    }
+    else{
+
+        nameError.style.display =
+        "none";
+
+        nameField.style.border =
+        "";
+
+    }
+
+});
+
+</script>
+<script>
+
+const passwordField =
+document.getElementById("password");
+
+const passwordError =
+document.getElementById("passwordError");
+
+passwordField.addEventListener("input",function(){
+
+    const password =
+    passwordField.value;
+
+    if(password.length < 8){
+
+        passwordError.innerHTML =
+        "Minimum 8 characters";
+
+        passwordError.style.display =
+        "block";
+    }
+
+    else if(
+
+        !/[A-Z]/.test(password)
+
+    ){
+
+        passwordError.innerHTML =
+        "Add at least one uppercase letter";
+
+        passwordError.style.display =
+        "block";
+    }
+
+    else if(
+
+        !/[a-z]/.test(password)
+
+    ){
+
+        passwordError.innerHTML =
+        "Add at least one lowercase letter";
+
+        passwordError.style.display =
+        "block";
+    }
+
+    else if(
+
+        !/[0-9]/.test(password)
+
+    ){
+
+        passwordError.innerHTML =
+        "Add at least one number";
+
+        passwordError.style.display =
+        "block";
+    }
+
+    else if(
+
+        !/[@$!%*?&]/.test(password)
+
+    ){
+
+        passwordError.innerHTML =
+        "Add at least one special character";
+
+        passwordError.style.display =
+        "block";
+    }
+
+    else{
+
+        passwordError.innerHTML =
+        "Strong Password ✓";
+
+        passwordError.style.color =
+        "#00ff99";
+
+        passwordError.style.display =
+        "block";
+    }
+
+});
+
+</script>
+<script>
+
+const phoneField =
+document.getElementById("phone");
+
+const phoneError =
+document.getElementById("phoneError");
+
+phoneField.addEventListener("input",function(){
+
+    const regex =
+
+    /^07[0-9]{8}$/;
+
+    if(
+
+        !regex.test(
+            phoneField.value
+        )
+
+        &&
+
+        phoneField.value !== ""
+
+    ){
+
+        phoneError.style.display =
+        "block";
+
+    }
+
+    else{
+
+        phoneError.style.display =
+        "none";
+
+    }
+
+});
+
+</script>
+<script>
+
+const emailField =
+document.getElementById("email");
+
+const emailError =
+document.getElementById("emailError");
+
+emailField.addEventListener("input",function(){
+
+    const regex =
+
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if(
+
+        !regex.test(
+            emailField.value
+        )
+
+        &&
+
+        emailField.value !== ""
+
+    ){
+
+        emailError.style.display =
+        "block";
+
+    }
+
+    else{
+
+        emailError.style.display =
+        "none";
+
+    }
+
+});
+
+</script>
+</body>
+</html>

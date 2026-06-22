@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Notifications - Smart EV Charge</title>
+
+<link rel="stylesheet" href="../assets/css/style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-bg"></div>
+<div class="dashboard-overlay"></div>
+
+<nav class="navbar">
+
+    <div class="logo">
+        ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+        <a href="owner-dashboard.html">Dashboard</a>
+        <a href="gps-map.html">GPS Centers</a>
+        <a href="book-slot.html">Book Slot</a>
+        <a href="my-bookings.html">My Bookings</a>
+        <a href="wallet.html">Wallet</a>
+        <a href="payments.html">Payments</a>
+        <a href="ratings.html">Ratings</a>
+
+        <a class="active" href="notifications.html">
+            Notifications
+            <span id="notificationCount"></span>
+        </a>
+
+        <a href="../php/logout.php">Logout</a>
+    </div>
+
+</nav>
+
+<main class="dashboard-modern">
+
+<section class="dashboard-hero">
+
+<div>
+
+<p class="tagline">
+SMART ALERTS
+</p>
+
+<h1>
+EV Owner
+<span>Notifications</span>
+</h1>
+
+<p class="hero-description">
+Get real-time updates about bookings,
+payments, nearby charging stations,
+low battery alerts and charging reminders.
+</p>
+
+</div>
+
+</section>
+
+<section
+id="notificationContainer"
+class="notification-grid">
+
+<!-- Notifications loaded here -->
+
+</section>
+
+</main>
+
+<script>
+
+/* LOAD NOTIFICATIONS */
+
+function loadNotifications(){
+
+fetch('../php/get_notifications.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    let container =
+    document.getElementById(
+    "notificationContainer"
+    );
+
+    container.innerHTML = "";
+
+    if(data.length === 0){
+
+        container.innerHTML = `
+
+        <div class="notification-card">
+
+            <div>
+
+                <h3>
+                    No Notifications
+                </h3>
+
+                <p>
+                    You don't have any notifications yet.
+                </p>
+
+            </div>
+
+        </div>
+
+        `;
+
+        return;
+    }
+
+    data.forEach(item => {
+
+        let cardClass = "info";
+
+        if(
+            item.title.includes("Approved")
+        ){
+            cardClass = "success";
+        }
+
+        if(
+            item.title.includes("Payment")
+        ){
+            cardClass = "success";
+        }
+
+        if(
+            item.title.includes("Battery")
+        ){
+            cardClass = "warning";
+        }
+
+        container.innerHTML += `
+
+        <div class="notification-card ${cardClass}">
+
+            <div>
+
+                <h3>
+                    ${item.title}
+                </h3>
+
+                <p>
+                    ${item.message}
+                </p>
+
+                <span>
+                    ${item.created_at}
+                </span>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+});
+
+}
+
+
+/* LOAD UNREAD COUNT */
+
+function loadNotificationCount(){
+
+fetch('../php/get_notification_count.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById(
+    "notificationCount"
+    ).innerHTML =
+
+    "(" + data.unread + ")";
+
+});
+
+}
+
+
+/* MARK AS READ */
+
+fetch('../php/read_notifications.php');
+
+
+/* INITIAL LOAD */
+
+loadNotifications();
+
+loadNotificationCount();
+
+
+/* AUTO REFRESH EVERY 10 SECONDS */
+
+setInterval(function(){
+
+    loadNotifications();
+    loadNotificationCount();
+
+},10000);
+
+</script>
+
+</body>
+</html>

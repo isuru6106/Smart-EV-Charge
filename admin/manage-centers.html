@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Manage Centers</title>
+
+  <link rel="stylesheet" href="adminstyle.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="logo">
+    ⚡ <span>SmartEV</span> Charge
+  </div>
+
+  <nav class="nav-links">
+
+    <a href="admin-dashboard.html">Dashboard</a>
+
+    <a href="manage-users.html">Users</a>
+
+    <a href="manage-centers.html" class="active">Centers</a>
+
+    <a href="admin-payments.html">Payments</a>
+
+    <a href="reports.html">Reports</a>
+
+    <a href="../login.html">Logout</a>
+
+  </nav>
+
+</header>
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <p class="mini-title">
+        CHARGING CENTER CONTROL
+      </p>
+
+      <h1>Manage Centers</h1>
+
+    </div>
+
+    <button
+class="primary-btn"
+onclick="window.location.href='add-center.html'">
+  + Add Center
+</button>
+
+  </div>
+
+ <div class="center-grid" id="centersContainer">
+
+    <div class="center-card">
+        <p>Loading centers...</p>
+    </div>
+
+</div>
+
+</div>
+<script>
+
+fetch('../php/get_center.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    let html = '';
+
+    data.forEach(center => {
+
+        let statusClass =
+            center.status === 'Open'
+            ? 'active-status'
+            : 'pending-status';
+
+        let actionButtons = '';
+
+        if(center.status === 'Open'){
+
+            actionButtons = `
+    <button
+    class="table-btn"
+    onclick="viewCenter(${center.center_id})">
+
+        View
+
+    </button>
+
+    <button
+    class="table-btn red-btn"
+    onclick="removeCenter(${center.center_id})">
+
+        Remove
+
+    </button>
+`;
+
+        }else{
+
+            actionButtons = `
+    <button
+    class="table-btn"
+    onclick="approveCenter(${center.center_id})">
+
+        Approve
+
+    </button>
+
+    <button
+    class="table-btn red-btn"
+    onclick="rejectCenter(${center.center_id})">
+
+        Reject
+
+    </button>
+`;
+        }
+
+        html += `
+
+        <div class="center-card">
+
+            <div class="center-top">
+
+                <h2>${center.center_name}</h2>
+
+                <span class="status ${statusClass}">
+                    ${center.status}
+                </span>
+
+            </div>
+
+            <p>📍 ${center.address}</p>
+
+            <p>🏙 ${center.city}</p>
+
+            <p>⚡ Total Slots: ${center.total_slots}</p>
+
+
+            <div class="center-actions">
+
+                ${actionButtons}
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    document.getElementById(
+        'centersContainer'
+    ).innerHTML = html;
+
+})
+
+.catch(error => {
+
+    console.log(error);
+
+});
+
+</script>
+<script>
+
+function viewCenter(centerId){
+
+    window.location.href =
+    "center-details.html?id=" + centerId;
+
+}
+
+function removeCenter(centerId){
+
+    if(confirm("Remove this charging center?")){
+
+        fetch("../php/delete_center.php",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                "application/x-www-form-urlencoded"
+            },
+
+            body:"center_id=" + centerId
+
+        })
+
+        .then(res=>res.text())
+
+        .then(data=>{
+
+            if(data==="success"){
+
+                alert("Center removed");
+
+                location.reload();
+
+            }
+
+        });
+
+    }
+
+}
+
+function approveCenter(centerId){
+
+    fetch("../php/approve_center.php",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":
+            "application/x-www-form-urlencoded"
+        },
+
+        body:"center_id=" + centerId
+
+    })
+
+    .then(res=>res.text())
+
+    .then(data=>{
+
+        alert("Center approved");
+
+        location.reload();
+
+    });
+
+}
+
+function removeCenter(centerId){
+
+    const confirmDelete = confirm(
+        "Are you sure you want to remove this charging center?\n\nThis action cannot be undone."
+    );
+
+    if(confirmDelete){
+
+        fetch("../php/delete_center.php",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/x-www-form-urlencoded"
+            },
+
+            body:"center_id=" + centerId
+
+        })
+
+        .then(res => res.text())
+
+        .then(data => {
+
+            if(data.trim() === "success"){
+
+                alert("Charging center removed successfully.");
+
+                location.reload();
+
+            }else{
+
+                alert("Failed to remove center.");
+
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error(error);
+
+            alert("Error removing center.");
+
+        });
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

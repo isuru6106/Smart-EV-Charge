@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>GPS Nearest Centers - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+    <div class="logo">⚡ Smart<span>EV</span> Charge</div>
+
+    <div class="nav-links">
+      <a href="owner-dashboard.html">Dashboard</a>
+      <a class="active" href="gps-map.html">GPS Centers</a>
+      <a href="book-slot.html">Book Slot</a>
+      <a href="my-bookings.html">My Bookings</a>
+      <a href="payments.html">Payments</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="../login.html">Logout</a>
+    </div>
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">GPS Tracking & Smart Recommendation</p>
+
+        <h1>
+          Find Nearest
+          <span>Charging Centers</span>
+        </h1>
+
+        <p class="hero-description">
+          Use your live location, battery percentage, available slots and queue
+          count to find the best EV charging center near you.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="gps-control-card">
+
+    </section>
+
+    <section class="map-section-card">
+
+      <div class="map-header">
+        <div>
+          <h2>Live Charging Map</h2>
+          <p>View your location and nearby charging centers</p>
+        </div>
+
+        <span class="map-status">● GPS Active</span>
+      </div>
+
+      <div class="map-box">
+        <div id="map"></div>
+      </div>
+
+    </section>
+
+    <section style="margin-top:30px;">
+
+      <div class="booking-table-header">
+        <div>
+          <h2>Recommended Charging Centers</h2>
+          <p>Sorted based on distance, availability, queue and battery level</p>
+        </div>
+      </div>
+
+      <div id="nearestList" class="grid"></div>
+
+    </section>
+
+  </main>
+
+  <script src="../assets/js/map.js"></script>
+  
+
+</body>
+
+</html>

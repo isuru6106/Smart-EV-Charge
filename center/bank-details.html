@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Bank Details - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+    <div class="logo">⚡ Smart<span>EV</span> Charge</div>
+
+    <div class="nav-links">
+      <a href="center-dashboard.html">Dashboard</a>
+      <a href="manage-slots.html">Slots</a>
+      <a href="manage-bookings.html">Bookings</a>
+      <a href="center-payments.html">Payments</a>
+      <a href="center-reports.html">Reports</a>
+      <a href="earnings.html">Earnings</a>
+      <a class="active" href="bank-details.html">Bank Account</a>
+      <a href="../login.html">Logout</a>
+    </div>
+  </nav>
+
+  <main class="dashboard-modern">
+
+  
+</head>
+<body>
+
+<div class="booking-form-card">
+
+<h2>Bank Account Details</h2>
+
+<form action="../php/save_bank_details.php" method="POST">
+
+<input
+type="text"
+id="account_holder"
+name="account_holder"
+placeholder="Account Holder Name"
+required
+>
+
+<small
+id="holderError"
+style="display:none;color:#ff6b6b;">
+Only letters and spaces allowed
+</small>
+
+<input
+type="text"
+id="bank_name"
+name="bank_name"
+placeholder="Bank Name"
+required
+>
+
+<small
+id="bankError"
+style="display:none;color:#ff6b6b;">
+Invalid bank name
+</small>
+
+<input
+type="text"
+id="branch"
+name="branch"
+placeholder="Branch"
+required
+>
+
+<small
+id="branchError"
+style="display:none;color:#ff6b6b;">
+Invalid branch name
+</small>
+
+<input
+type="text"
+id="account_number"
+name="account_number"
+placeholder="Account Number"
+required
+>
+
+<small
+id="accountError"
+style="display:none;color:#ff6b6b;">
+Account number must be 8-20 digits
+</small>
+
+<button
+id="saveBtn"
+class="btn">
+Save Details
+</button>
+
+</form>
+
+</div>
+<script>
+const holder =
+document.getElementById("account_holder");
+
+const holderError =
+document.getElementById("holderError");
+
+holder.addEventListener("input", function(){
+
+    const regex =
+    /^[A-Za-z ]+$/;
+
+    if(
+        !regex.test(holder.value)
+        &&
+        holder.value !== ""
+    ){
+        holder.style.border =
+        "2px solid red";
+
+        holderError.style.display =
+        "block";
+    }
+    else{
+        holder.style.border =
+        "";
+
+        holderError.style.display =
+        "none";
+    }
+
+});
+</script>
+<script>
+    const bank =
+document.getElementById("bank_name");
+
+const bankError =
+document.getElementById("bankError");
+
+bank.addEventListener("input", function(){
+
+    const regex =
+    /^[A-Za-z ]+$/;
+
+    if(
+        !regex.test(bank.value)
+        &&
+        bank.value !== ""
+    ){
+
+        bank.style.border =
+        "2px solid red";
+
+        bankError.style.display =
+        "block";
+
+    }
+    else{
+
+        bank.style.border = "";
+
+        bankError.style.display =
+        "none";
+
+    }
+
+});
+</script>
+<script>
+const branch =
+document.getElementById("branch");
+
+const branchError =
+document.getElementById("branchError");
+
+branch.addEventListener("input", function(){
+
+    const regex =
+    /^[A-Za-z ]+$/;
+
+    if(
+        !regex.test(branch.value)
+        &&
+        branch.value !== ""
+    ){
+
+        branch.style.border =
+        "2px solid red";
+
+        branchError.style.display =
+        "block";
+
+    }
+    else{
+
+        branch.style.border = "";
+
+        branchError.style.display =
+        "none";
+
+    }
+
+});
+</script>
+<script>
+const account =
+document.getElementById("account_number");
+
+const accountError =
+document.getElementById("accountError");
+
+account.addEventListener("input", function(){
+
+    const regex =
+    /^[0-9]{8,20}$/;
+
+    if(
+        !regex.test(account.value)
+        &&
+        account.value !== ""
+    ){
+
+        account.style.border =
+        "2px solid red";
+
+        accountError.style.display =
+        "block";
+
+    }
+    else{
+
+        account.style.border = "";
+
+        accountError.style.display =
+        "none";
+
+    }
+
+});
+</script>
+<script>
+document
+.querySelector("form")
+.addEventListener("submit",function(e){
+
+    const accountRegex =
+    /^[0-9]{8,20}$/;
+
+    if(
+        !accountRegex.test(
+        account.value
+        )
+    ){
+
+        alert(
+        "Please correct bank details"
+        );
+
+        e.preventDefault();
+
+    }
+
+});
+</script>
+</body>
+</html>

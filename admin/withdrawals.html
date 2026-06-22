@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Withdrawal Requests</title>
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+<div class="booking-table-card">
+
+<h2>Withdrawal Requests</h2>
+
+<table class="modern-booking-table">
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Center Owner</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="withdrawTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script>
+
+fetch("../php/get_admin_withdrawals.php")
+
+.then(r=>r.json())
+
+.then(data=>{
+
+let html="";
+
+data.forEach(row=>{
+
+html += `
+
+<tr>
+
+<td>
+WR${row.request_id}
+</td>
+
+<td>
+${row.full_name}
+</td>
+
+<td>
+Rs.${row.amount}
+</td>
+
+<td>
+${row.status}
+</td>
+
+<td>
+
+<button
+onclick="approve(${row.request_id})">
+
+Approve
+
+</button>
+
+<button
+onclick="rejectRequest(${row.request_id})">
+
+Reject
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById(
+"withdrawTable"
+).innerHTML = html;
+
+});
+
+function approve(id){
+
+location.href=
+
+"../php/approve_withdrawal.php?id="
+
++ id;
+
+}
+function rejectRequest(id){
+
+location.href=
+
+"../php/reject_withdrawal.php?id="
+
++ id;
+
+}
+
+</script>
+
+</body>
+</html>

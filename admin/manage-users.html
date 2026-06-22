@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Manage Users</title>
+
+  <link rel="stylesheet" href="adminstyle.css">
+
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="logo">
+    ⚡ <span>SmartEV</span> Charge
+  </div>
+
+  <nav class="nav-links">
+
+    <a href="admin-dashboard.html">Dashboard</a>
+
+    <a href="manage-users.html" class="active">Users</a>
+
+    <a href="manage-centers.html">Centers</a>
+
+    <a href="admin-payments.html">Payments</a>
+
+    <a href="reports.html">Reports</a>
+
+    <a href="../login.html">Logout</a>
+
+  </nav>
+
+</header>
+
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <p class="mini-title">ADMIN CONTROL</p>
+      <h1>Manage Users</h1>
+    </div>
+
+    <button
+    class="primary-btn"
+    onclick="window.location.href='add-user.html'">
+    + Add New User
+    </button>
+
+  </div>
+
+  <!-- SEARCH -->
+
+  <div class="search-box">
+
+    <input type="text" placeholder="Search users...">
+
+  </div>
+
+  <!-- STATS -->
+
+  <div class="stats-grid">
+
+    <div class="small-card">
+        <h3>Total Users</h3>
+        <h1 id="totalUsers">0</h1>
+    </div>
+
+    <div class="small-card">
+        <h3>EV Owners</h3>
+        <h1 id="evOwners">0</h1>
+    </div>
+
+    <div class="small-card">
+        <h3>Center Owners</h3>
+        <h1 id="centerOwners">0</h1>
+    </div>
+
+</div>
+
+  <!-- TABLE -->
+
+  <div class="glass-table">
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+        <tbody id="usersTable">
+
+            <tr>
+                <td colspan="6" style="text-align:center;">
+                    Loading users...
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+</div>
+
+<script>
+
+fetch('../php/get_user_stats.php')
+.then(response => response.json())
+.then(data => {
+
+    document.getElementById('totalUsers').innerHTML =
+    data.users || 0;
+
+    document.getElementById('evOwners').innerHTML =
+    data.evOwners || 0;
+
+    document.getElementById('centerOwners').innerHTML =
+    data.centerOwners || 0;
+
+})
+.catch(error => {
+    console.log(error);
+});
+
+</script>
+
+<script>
+
+fetch('../php/get_users.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    let html = '';
+
+    data.forEach(user => {
+
+        let roleText = '';
+
+        if(user.role === 'ev_owner'){
+            roleText = 'EV Owner';
+        }
+        else if(user.role === 'center_owner'){
+            roleText = 'Center Owner';
+        }
+        else{
+            roleText = 'Admin';
+        }
+
+        html += `
+        <tr>
+
+            <td>${user.id}</td>
+
+            <td>${user.full_name}</td>
+
+            <td>${user.email}</td>
+
+            <td>${roleText}</td>
+
+            <td>
+                <span class="status active-status">
+                    Active
+                </span>
+            </td>
+
+            <td>
+                <button class="table-btn">
+                    Edit
+                </button>
+            </td>
+
+        </tr>
+        `;
+    });
+
+    document.getElementById('usersTable').innerHTML = html;
+
+})
+
+.catch(error => {
+
+    console.log(error);
+
+});
+
+</script>
+
+</body>
+</html>

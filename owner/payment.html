@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Payment</title>
+
+<link rel="stylesheet"
+href="../assets/css/style.css">
+
+</head>
+
+<body>
+
+<div class="booking-form-card">
+
+<h2>EV Charging Payment</h2>
+
+<p>
+Complete payment for your charging session
+</p>
+
+<div>
+
+<p>
+Booking ID:
+<span id="bookingId"></span>
+</p>
+
+<p>
+Amount:
+<span id="amount"></span>
+</p>
+
+</div>
+
+<form
+id="paymentForm" 
+action="../php/process_payment.php"
+method="POST">
+
+<input
+type="hidden"
+name="booking_id"
+id="booking_id"
+/>
+
+<label>Payment Method</label>
+
+<select 
+name="method"
+id="method">
+
+<option value="Card">
+Card
+</option>
+
+<option value="Online">
+Online Banking
+</option>
+
+<option value="QR Payment">
+        QR Payment
+    </option>
+
+</select>
+
+<button
+class="btn"
+type="button"
+onclick="payNow(event)">
+
+Pay Now
+
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const bookingId =
+params.get("booking_id");
+
+fetch(
+`../php/get_payment_details.php?booking_id=${bookingId}`
+)
+
+.then(res => res.json())
+
+.then(data => {
+
+document.getElementById(
+"bookingId"
+).innerHTML =
+bookingId;
+
+document.getElementById(
+"amount"
+).innerHTML =
+"Rs. " + data.amount;
+
+document.getElementById(
+"booking_id"
+).value =
+bookingId;
+
+});
+
+</script>
+<script>
+
+function payNow(){
+
+    const method =
+    document.getElementById("method").value;
+
+    const bookingId =
+    document.getElementById("booking_id").value;
+
+    if(method === "Card"){
+
+        window.location.href =
+        "card-payment.html?booking_id=" +
+        bookingId;
+
+        return;
+    }
+
+    if(method === "Online"){
+
+        window.location.href =
+        "online-payment.html?booking_id=" +
+        bookingId;
+
+        return;
+    }
+
+    if(method === "QR Payment"){
+
+        window.location.href =
+        "qr-payment.html?booking_id=" +
+        bookingId;
+
+        return;
+    }
+
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Payments - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="owner-dashboard.html">Dashboard</a>
+      <a href="gps-map.html">GPS Centers</a>
+      <a href="book-slot.html">Book Slot</a>
+      <a href="my-bookings.html">My Bookings</a>
+      <a href="wallet.html">Wallet</a>
+      <a class="active" href="payments.html">Payments</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Payment History</p>
+
+        <h1>
+          My EV Charging
+          <span>Payments</span>
+        </h1>
+
+        <p class="hero-description">
+          View your completed payments, pending payments, invoices and
+          charging session payment history in one place.
+        </p>
+      </div>
+
+    </section>
+
+    
+
+    <section class="booking-table-card" style="margin-top:30px;">
+
+      <div class="booking-table-header">
+        <div>
+          <h2>Payment Records</h2>
+          <p>Your charging payment records and transaction status</p>
+        </div>
+
+        <a class="btn" href="book-slot.html">
+          + New Booking
+        </a>
+      </div>
+
+      <div class="table-wrapper">
+
+        <table class="modern-booking-table">
+
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+          </thead>
+
+        <tbody id="paymentHistory">
+
+        </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+
+
+
+
+/* LOAD PAYMENT TABLE */
+
+fetch("../php/get_wallet_transactions.php")
+
+.then(res => res.json())
+
+.then(data => {
+
+    let html = "";
+
+    data.forEach(row => {
+
+        html += `
+        <tr>
+
+            <td>${row.transaction_id}</td>
+
+            <td>${row.type}</td>
+
+            <td>${row.description}</td>
+
+            <td>Rs. ${row.amount}</td>
+
+            <td>${row.created_at}</td>
+
+        </tr>
+        `;
+    });
+
+    document.getElementById(
+        "paymentHistory"
+    ).innerHTML = html;
+
+});
+
+</script>
+
+</body>
+
+</html>

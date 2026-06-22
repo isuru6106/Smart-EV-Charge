@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Edit Booking - Smart EV Charge</title>
+
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+
+<body>
+
+<div class="dashboard-bg"></div>
+<div class="dashboard-overlay"></div>
+
+<nav class="navbar">
+
+<div class="logo">
+⚡ Smart<span>EV</span> Charge
+</div>
+
+<div class="nav-links">
+<a href="owner-dashboard.html">Dashboard</a>
+<a href="gps-map.html">GPS Centers</a>
+<a href="book-slot.html">Book Slot</a>
+<a href="my-bookings.html">My Bookings</a>
+<a href="payments.html">Payments</a>
+<a href="ratings.html">Ratings</a>
+<a href="notifications.html">Notifications</a>
+<a href="../login.html">Logout</a>
+</div>
+
+</nav>
+
+<main class="dashboard-modern">
+
+<section class="booking-form-layout">
+
+<div class="booking-form-card">
+
+<h2>Edit Booking</h2>
+
+<p>
+Update your booking details.
+After editing, the booking must be approved again by the charging center.
+</p>
+
+<form
+action="../php/edit_booking.php"
+method="POST"
+>
+
+<input
+type="hidden"
+id="booking_id"
+name="booking_id"
+>
+
+<label>Booking Date</label>
+
+<input
+type="date"
+id="booking_date"
+name="booking_date"
+required
+>
+
+<label>Booking Time</label>
+
+<input
+type="time"
+id="booking_time"
+name="booking_time"
+required
+>
+
+<label>Charging Hours</label>
+
+<input
+type="number"
+id="charging_hours"
+name="charging_hours"
+min="1"
+max="24"
+required
+>
+
+<button
+class="btn"
+type="submit"
+>
+Update Booking
+</button>
+
+</form>
+
+</div>
+
+</section>
+
+</main>
+
+<script>
+
+/* GET BOOKING ID */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const booking_id =
+params.get("booking_id");
+
+/* STORE ID */
+
+document.getElementById(
+"booking_id"
+).value = booking_id;
+
+/* LOAD BOOKING */
+
+fetch(
+"../php/get_booking_details.php?booking_id="
++ booking_id
+)
+
+.then(response => response.json())
+
+.then(data => {
+
+document.getElementById(
+"booking_date"
+).value =
+data.booking_date;
+
+document.getElementById(
+"booking_time"
+).value =
+data.booking_time;
+
+document.getElementById(
+"charging_hours"
+).value =
+data.charging_hours;
+
+});
+
+</script>
+
+</body>
+</html>

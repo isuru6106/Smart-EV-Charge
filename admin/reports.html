@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Reports</title>
+
+    <link rel="stylesheet" href="adminstyle.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <header class="topbar">
+
+        <div class="logo">
+            ⚡ <span>SmartEV</span> Charge
+        </div>
+
+        <nav class="nav-links">
+
+            <a href="admin-dashboard.html">Dashboard</a>
+
+            <a href="manage-users.html">Users</a>
+
+            <a href="manage-centers.html">Centers</a>
+
+            <a href="admin-payments.html">Payments</a>
+
+            <a href="reports.html" class="active">Reports</a>
+
+            <a href="../login.html">Logout</a>
+
+        </nav>
+
+    </header>
+
+    <!-- PAGE -->
+
+    <div class="page-container">
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <div>
+
+                <p class="mini-title">
+                    ANALYTICS & REPORTS
+                </p>
+
+                <h1>System Reports</h1>
+
+            </div>
+
+        </div>
+
+        <!-- STATS -->
+
+        <div class="stats-grid">
+
+    <div class="small-card">
+        <h3>Total Revenue</h3>
+        <h1 id="totalRevenue">Rs. 0</h1>
+        <p>Platform income</p>
+    </div>
+
+    <div class="small-card">
+        <h3>Total Bookings</h3>
+        <h1 id="totalBookings">0</h1>
+        <p>Completed bookings</p>
+    </div>
+
+    <div class="small-card">
+        <h3>Active Centers</h3>
+        <h1 id="activeCenters">0</h1>
+        <p>Running charging stations</p>
+    </div>
+
+</div>
+        <!-- CHARTS -->
+
+        <div class="chart-layout">
+
+            <!-- REVENUE -->
+
+            <div class="chart-box">
+
+                <div class="chart-top">
+
+                    <h2>Revenue Analytics</h2>
+
+                    <span>Last 7 Days</span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="revenueChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- BOOKINGS -->
+
+            <div class="chart-box">
+
+                <div class="chart-top">
+
+                    <h2>Booking Status</h2>
+
+                    <span>Current Status</span>
+
+                </div>
+
+                <div class="chart-container">
+
+                    <canvas id="bookingChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CHART JS -->
+
+    <script>
+
+/* KPI CARDS */
+
+fetch('../php/get_admin_report_stats.php')
+.then(response => response.json())
+.then(data => {
+
+    console.log("Stats:", data);
+
+    document.getElementById('totalRevenue').innerHTML =
+        'Rs. ' + (data.revenue || 0);
+
+    document.getElementById('totalBookings').innerHTML =
+        data.bookings || 0;
+
+    document.getElementById('activeCenters').innerHTML =
+        data.centers || 0;
+
+});
+
+
+/* REVENUE CHART */
+
+fetch('../php/get_revenue_chart.php')
+.then(response => response.json())
+.then(data => {
+
+    new Chart(
+        document.getElementById('revenueChart'),
+        {
+            type: 'line',
+            data: {
+                labels: data.days || [],
+                datasets: [{
+                    label: 'Revenue',
+                    data: data.revenue || [],
+                    borderColor: '#00ff9d',
+                    backgroundColor: 'rgba(0,255,157,0.15)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#00ff9d',
+                    pointRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        }
+    );
+
+});
+
+
+/* BOOKING STATUS CHART */
+
+fetch('../php/get_admin_booking_chart.php')
+.then(response => response.json())
+.then(data => {
+
+    new Chart(
+        document.getElementById('bookingChart'),
+        {
+            type: 'bar',
+            data: {
+                labels: data.labels || [],
+                datasets: [{
+                    label: 'Bookings',
+                    data: data.data || [],
+                    backgroundColor: [
+                        '#ffd43b',
+                        '#00ff9d',
+                        '#00c853',
+                        '#ff5252'
+                    ],
+                    borderRadius: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        }
+    );
+
+});
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Online-payment - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      ⚡ Smart<span>EV</span> Charge
+    </div>
+
+    <div class="nav-links">
+      <a href="owner-dashboard.html">Dashboard</a>
+      <a href="gps-map.html">GPS Centers</a>
+      <a href="book-slot.html">Book Slot</a>
+      <a href="my-bookings.html">My Bookings</a>
+      <a class="active" href="wallet.html">Wallet</a>
+      <a href="payments.html">Payments</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="../login.html">Logout</a>
+    </div>
+
+  </nav>
+
+  <main class="dashboard-modern">
+
+   
+</head>
+
+<body>
+
+<div class="booking-form-card">
+
+<h2>Online Banking Payment</h2>
+
+<h3 id="paymentAmount"></h3>
+
+<p>Secure Bank Transfer Portal</p>
+
+<form action="../php/topup_wallet.php" method="POST">
+
+<input type="hidden"
+name="amount"
+id="amount">
+
+<input type="hidden" name="method"
+value="Online Banking">
+
+<label>Bank Name</label>
+
+<select required>
+
+<option>Bank of Ceylon</option>
+<option>People's Bank</option>
+<option>Commercial Bank</option>
+<option>Sampath Bank</option>
+
+</select>
+
+<label>Account Number</label>
+
+<input 
+type="number"
+name="account_number"
+id="account_number"
+required>
+<small
+id="accountError"
+style="display:none;color:#ff6b6b;">
+Account number must be 8-20 digits
+</small>
+
+
+<label>Account Holder</label>
+
+<input 
+type="text"
+name="account_holder"
+id="account_holder"
+required>
+<small
+id="holderError"
+style="display:none;color:#ff6b6b;">
+Only letters and spaces allowed
+</small>
+
+<label>Transfer OTP</label>
+
+<input 
+type="password"
+name="otp"
+id="otp"
+required>
+<small id="passwordError" class="error-msg"
+    style="
+    color:#ff6b6b;
+    display:none;
+    margin-left:10px;
+    ">
+
+<button class="btn">
+
+Confirm Payment
+
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+const params =
+new URLSearchParams(window.location.search);
+
+const amount =
+params.get("amount");
+
+document.getElementById("amount").value =
+amount;
+
+document.getElementById("paymentAmount")
+.innerHTML =
+"Amount : Rs. " + amount;
+
+</script>
+</body>
+</html>

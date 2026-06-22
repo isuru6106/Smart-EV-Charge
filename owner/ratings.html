@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ratings - Smart EV Charge</title>
+
+<link rel="stylesheet" href="../assets/css/style.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-bg"></div>
+<div class="dashboard-overlay"></div>
+
+<nav class="navbar">
+
+<div class="logo">
+⚡ Smart<span>EV</span> Charge
+</div>
+
+<div class="nav-links">
+
+<a href="owner-dashboard.html">Dashboard</a>
+
+<a href="gps-map.html">GPS Centers</a>
+
+<a href="book-slot.html">Book Slot</a>
+
+<a href="my-bookings.html">My Bookings</a>
+
+<a href="wallet.html">Wallet</a>
+
+<a href="payments.html">Payments</a>
+
+<a class="active" href="ratings.html">Ratings</a>
+
+<a href="notifications.html">Notifications</a>
+
+<a href="../login.html">Logout</a>
+
+</div>
+
+</nav>
+
+<main class="dashboard-modern">
+
+<section class="dashboard-hero">
+
+<div>
+
+<p class="tagline">
+Customer Feedback
+</p>
+
+<h1>
+Rate Charging
+<span>Center</span>
+</h1>
+
+<p class="hero-description">
+
+Share your charging experience, rate service quality
+and help other EV owners choose better charging centers.
+
+</p>
+
+</div>
+
+</section>
+
+<section class="booking-form-layout">
+
+<!-- FORM -->
+
+<div class="booking-form-card">
+
+<h2>Submit Your Rating</h2>
+
+<p>
+Rate the charging center based on your latest charging experience.
+</p>
+
+<form action="../php/add_rating.php" method="POST">
+
+<label>User ID</label>
+
+<input
+type="number"
+id="user_id"
+name="user_id"
+readonly
+required
+>
+
+<label>Select Charging Center</label>
+
+<select
+id="center_id"
+name="center_id"
+required
+>
+
+</select>
+
+<label>Rating</label>
+
+<select
+name="rating"
+required
+>
+
+<option value="5">
+⭐⭐⭐⭐⭐ Excellent
+</option>
+
+<option value="4">
+⭐⭐⭐⭐ Good
+</option>
+
+<option value="3">
+⭐⭐⭐ Average
+</option>
+
+<option value="2">
+⭐⭐ Poor
+</option>
+
+<option value="1">
+⭐ Very Poor
+</option>
+
+</select>
+
+<label>Review</label>
+
+<textarea
+name="comment"
+placeholder="Write your review here..."
+required
+></textarea>
+
+<button
+class="btn"
+type="submit"
+>
+
+Submit Rating
+
+</button>
+
+</form>
+
+</div>
+
+<!-- SUMMARY -->
+
+<div class="booking-info-card">
+
+<h2>Rating Summary</h2>
+
+<div class="booking-info-item">
+
+<span>
+Average Rating
+</span>
+
+<strong id="avgRating">
+0
+</strong>
+
+</div>
+
+<div class="booking-info-item">
+
+<span>
+Total Reviews
+</span>
+
+<strong id="totalReviews">
+0
+</strong>
+
+</div>
+
+<div class="booking-info-item">
+
+<span>
+Selected Center
+</span>
+
+<strong id="selectedCenter">
+
+Loading...
+
+</strong>
+
+</div>
+
+<div class="booking-info-item">
+
+<span>
+Latest Rating
+</span>
+
+<strong id="lastRating">
+
+No Rating
+
+</strong>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<script>
+
+/* LOAD LOGGED USER */
+
+fetch('../php/get_session_user.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+document.getElementById(
+"user_id"
+).value = data.user_id;
+
+});
+
+
+/* LOAD CHARGING CENTERS */
+
+fetch('../php/get_centers.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+let dropdown =
+document.getElementById(
+"center_id"
+);
+
+dropdown.innerHTML = "";
+
+data.forEach(center => {
+
+dropdown.innerHTML += `
+
+<option
+value="${center.center_id}"
+>
+
+${center.center_name}
+
+</option>
+
+`;
+
+});
+
+loadRatingSummary();
+
+});
+
+
+/* LOAD CENTER RATING */
+
+function loadRatingSummary(){
+
+let dropdown =
+document.getElementById(
+"center_id"
+);
+
+if(dropdown.options.length === 0)
+return;
+
+let center_id =
+dropdown.value;
+
+let center_name =
+dropdown.options[
+dropdown.selectedIndex
+].text;
+
+document.getElementById(
+"selectedCenter"
+).innerHTML =
+center_name;
+
+fetch(
+'../php/get_center_rating.php?center_id='
++ center_id
+)
+
+.then(response => response.json())
+
+.then(data => {
+
+document.getElementById(
+"avgRating"
+).innerHTML =
+data.avg_rating;
+
+document.getElementById(
+"totalReviews"
+).innerHTML =
+data.total_reviews;
+
+document.getElementById(
+"lastRating"
+).innerHTML =
+data.last_rating;
+
+});
+
+}
+
+
+/* CENTER CHANGE */
+
+document.addEventListener(
+
+"change",
+
+function(e){
+
+if(
+e.target.id ===
+"center_id"
+){
+
+loadRatingSummary();
+
+}
+
+}
+
+);
+
+</script>
+
+</body>
+
+</html>

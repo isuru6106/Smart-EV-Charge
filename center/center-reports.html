@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Center Reports - Smart EV Charge</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <div class="dashboard-bg"></div>
+  <div class="dashboard-overlay"></div>
+
+  <nav class="navbar">
+    <div class="logo">⚡ Smart<span>EV</span> Charge</div>
+
+    <div class="nav-links">
+      <a href="center-dashboard.html">Dashboard</a>
+      <a href="manage-slots.html">Slots</a>
+      <a href="manage-bookings.html">Bookings</a>
+      <a href="center-payments.html">Payments</a>
+      <a class="active" href="center-reports.html">Reports</a>
+      <a href="earnings.html">Earnings</a>
+      <a href="bank-details.html">Bank Account</a>
+      <a href="../login.html">Logout</a>
+    </div>
+  </nav>
+
+  <main class="dashboard-modern">
+
+    <section class="dashboard-hero">
+
+      <div>
+        <p class="tagline">Reports & Analytics</p>
+
+        <h1>
+          Center Reports
+          <span>Analytics</span>
+        </h1>
+
+        <p class="hero-description">
+          View revenue trends, booking performance, customer ratings,
+          energy usage and charging center operational insights.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="grid dashboard-kpis">
+
+      <div class="card">
+        <h3>Monthly Income</h3>
+        <p>Total revenue this month</p>
+        <div class="kpi" id="monthlyRevenue">0</div>
+      </div>
+
+      <div class="card">
+        <h3>Completed Sessions</h3>
+        <p>Finished charging sessions</p>
+        <div class="kpi" id="completedSessions">0</div>
+      </div>
+
+      <div class="card">
+    <h3>Energy Sold</h3>
+    <p>Total charging energy usage</p>
+    <div class="kpi" id="energySold">N/A</div>
+</div>
+
+      <div class="card">
+        <h3>Average Rating</h3>
+        <p>Customer satisfaction level</p>
+       <div class="kpi" id="averageRating">0</div>
+      </div>
+
+    </section>
+
+    <section class="two-col" style="margin-top:30px;">
+
+      <div class="card">
+        <h3>Weekly Revenue</h3>
+        <p>Revenue analytics for the current week</p>
+        <canvas id="revenueChart"></canvas>
+      </div>
+
+      <div class="card">
+        <h3>Booking Status</h3>
+        <p>Booking request and approval performance</p>
+        <canvas id="bookingChart"></canvas>
+      </div>
+
+    </section>
+
+    <section class="booking-table-card" style="margin-top:30px;">
+
+      <div class="booking-table-header">
+        <div>
+          <h2>Report Summary</h2>
+          <p>Daily bookings, energy usage and revenue summary</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+
+        <table class="modern-booking-table">
+
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Bookings</th>
+              <th>Completed</th>
+              <th>Energy kWh</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+
+          <tbody id="reportTableBody">
+
+            </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="../assets/js/charts.js"></script>
+
+  <script>
+
+fetch('../php/get_report_stats.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+document.getElementById(
+'monthlyRevenue'
+).innerHTML =
+'Rs. ' + data.revenue;
+
+document.getElementById(
+'completedSessions'
+).innerHTML =
+data.completed;
+
+document.getElementById(
+'averageRating'
+).innerHTML =
+data.rating;
+
+});
+
+</script>
+
+<script>
+
+fetch('../php/get_energy.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    document.getElementById('energySold').innerHTML =
+    data.energy + ' kWh';
+
+});
+
+</script>
+<script>
+
+fetch('../php/get_report_table.php')
+
+.then(response => response.json())
+
+.then(data => {
+
+    let html = '';
+
+    data.forEach(row => {
+
+        html += `
+
+        <tr>
+
+            <td>${row.day}</td>
+
+            <td>${row.bookings}</td>
+
+            <td>${row.completed}</td>
+
+            <td>N/A</td>
+
+            <td>Rs. ${row.revenue}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById(
+        'reportTableBody'
+    ).innerHTML = html;
+
+});
+
+</script>
+
+</body>
+</html>
