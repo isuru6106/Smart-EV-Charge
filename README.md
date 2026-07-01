@@ -144,13 +144,14 @@ http://localhost/ev_charging/
 
 ## 👨‍💻 Authors
 
-### Isuru Udeshitha
-**Bsc in Physical Science**
-**[Statistics & Computer Science]**
+### **Isuru Udeshitha**
+BSc in Physical Science - 
+Statistics & Computer Science
 
-### Himara Liyanage
-**BSc (Hons) Information Technology** 
-**Specialization in Computer Systems & Network Engineering**
+### **Himara Liyanage**
+BSc (Hons) Information Technology  
+Specialization in Computer Systems & Network Engineering
+
 ---
 
 ## 📄 License
