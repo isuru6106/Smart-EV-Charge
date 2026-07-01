@@ -146,11 +146,11 @@ http://localhost/ev_charging/
 
 ### Isuru Udeshitha
 **Bsc in Physical Science**
-**Statistics & Computer Science**
+**[Statistics & Computer Science]**
 
 ### Himara Liyanage
-BSc (Hons) Information Technology  
-Specialization in Computer Systems & Network Engineering
+**BSc (Hons) Information Technology** 
+**Specialization in Computer Systems & Network Engineering**
 ---
 
 ## 📄 License
