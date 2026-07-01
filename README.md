@@ -144,13 +144,13 @@ http://localhost/ev_charging/
 
 ## 👨‍💻 Authors
 
+### Isuru Udeshitha
+**Bsc in Physical Science**
+**Statistics & Computer Science**
+
 ### Himara Liyanage
 BSc (Hons) Information Technology  
 Specialization in Computer Systems & Network Engineering
-
-### Isuru Udeshitha
-Full Stack Developer | MERN Stack | C# .NET | AI & Data Science Enthusiast
-
 ---
 
 ## 📄 License
